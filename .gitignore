@@ -12,5 +12,8 @@ config.json
 *.pem
 *.json
 *.jpg
+*.png
 *.pdf
 *.csv
+*.zip
+
