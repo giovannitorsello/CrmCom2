@@ -1,0 +1,59 @@
+version: "3.3"
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+services:
+  crmcomserver:
+    build: ./CrmComServer
+    container_name: crmcomserver
+    ports:
+      - "18088:18088"
+      - "8443:18443"
+      - "7502:7502"
+    depends_on:
+      - firewallcommandserver
+    networks:
+      default:
+        ipv4_address: 172.30.0.10
+    links:
+      - firewallcommandserver
+  firewallcommandserver:
+    build: ./FirewallCommandServer
+    container_name: firewallcommandserver
+    ports:
+      - "61234:61234"
+    networks:
+      default:
+        ipv4_address: 172.30.0.11
+  crmcomapp:
+    build: ./crmcom2_app
+    container_name: crmcomapp
+    ports:
+      - "8888:8888"
+    depends_on:
+      - crmcomserver
+    networks:
+      default:
+        ipv4_address: 172.30.0.12
+    links:
+      - crmcomserver
+  reverseproxy:
+    build: ./ReverseProxy
+    container_name: rp_nginx
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - crmcomapp
+    links:
+      - crmcomapp
+    networks:
+        default:
+          ipv4_address: 172.30.0.13
+    volumes:
+      - ./ReverseProxy/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./ReverseProxy/nginx/error.log:/etc/nginx/error_log.log
+      - ./ReverseProxy/nginx/cache/:/etc/nginx/cache

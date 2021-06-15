@@ -1,0 +1,4 @@
+{"level":"info","message":"Firewall Command Server started.","service":"user-service"}
+{"level":"info","message":"Command server is listening on port 61234","service":"user-service"}
+{"level":"info","time":"2020-10-21T10:39:36+02:00","message":"Firewall Command Server started.","service":"user-service"}
+{"level":"info","time":"2020-10-21T10:39:36+02:00","message":"Command server is listening on port 61234","service":"user-service"}

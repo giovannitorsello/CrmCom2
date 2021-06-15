@@ -1,0 +1,24 @@
+version: "3.3"
+services:
+  crmcomserver:
+    build: ./CrmComServer
+    ports:
+      - "18088:18088"
+      - "8443:18443"
+      - "7502:7502"
+    network_mode: "host"
+  firewallcommandserver:
+    build: ./FirewallCommandServer
+    ports:
+      - "61234:61234"
+    volumes:
+      - .:/code
+      - logvolume01:/var/log
+    network_mode: "host"
+  crmcom_app:
+      build: ./crmcom2_app
+      ports:
+        - "8080:8080"
+      network_mode: "host"
+volumes:
+  logvolume01: {}
