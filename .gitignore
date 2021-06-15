@@ -9,6 +9,8 @@ backup/
 data_csv/
 docker/
 config.json
+backup/*
+data_csv/*
 *.pem
 *.json
 *.jpg
@@ -16,4 +18,5 @@ config.json
 *.pdf
 *.csv
 *.zip
+*.sql
 
