@@ -5,6 +5,9 @@ log/
 documents/
 uploads/
 certs/
+backup/
+data_csv/
+docker/
 config.json
 *.pem
 *.json
