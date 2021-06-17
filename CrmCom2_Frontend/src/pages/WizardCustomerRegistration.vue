@@ -203,7 +203,10 @@
               rules="required|address"
               v-slot="{ errors }"
             >
-              <q-input label="Indirizzo" v-model="selectedCustomer.address" />
+              <q-input label="Indirizzo" 
+                v-model="selectedCustomer.address" 
+                @focusout.native="customerAddressChange()"
+              />
               <span class="error">{{ errors[0] }}</span>
             </ValidationProvider>
 
@@ -323,6 +326,7 @@
                 <q-input
                   label="Indirizzo esecuzione contratto"
                   v-model="selectedContract.address"
+                  @focusout.native="contractAddressChange()"
                 />
                 <span class="error">{{ errors[0] }}</span>
               </ValidationProvider>
@@ -337,6 +341,7 @@
                 <q-input
                   label="Indirizzo fatturazione contratto"
                   v-model="selectedContract.invoiceAddress"
+                  @focusout.native="invoiceAddressChange()"
                 />
                 <span class="error">{{ errors[0] }}</span>
               </ValidationProvider>
@@ -609,6 +614,12 @@
               label="Visualizza"
               @click="openFinalDocument"
             />
+            <q-btn
+              color="primary"
+              icon="document"
+              label="Visualizza"
+              @click="saveContract()"
+            />
           </div>
         </div>
 
@@ -751,6 +762,23 @@ export default {
     prevStep() {
       if(this.step>=2) this.step--;
     },
+    saveContract() {
+      this.$axios.post('/adminarea/registration/save_contract', {
+          customer: this.selectedCustomer,
+          contract: this.selectedContract,
+          services: this.selectedServicesTemplate
+        })
+        .then(response => {
+            if (response.data.status === "OK") {
+              console.log(this.fileFinalDocument);
+              this.makeToast(response.data.msg);
+            }
+          })
+        .catch(error => {
+          console.log(error);
+          this.makeToast("Si è verificato un errore");
+        });
+    },
     generateFinalDocument() {
       this.selectedCustomer.uuid=this.uuid;
       this.selectedContract.signature=this.uuid;
@@ -763,7 +791,8 @@ export default {
 
       this.$axios.post('/adminarea/registration/generate_final_document', {
           customer: this.selectedCustomer,
-          contract: this.selectedContract
+          contract: this.selectedContract,
+          services: this.selectedServicesTemplate
         })
         .then(response => {
             if (response.data.status === "OK") {
@@ -862,6 +891,35 @@ export default {
           .catch(error => {
               console.log(error);
           });
+    },
+    contractAddressChange() {
+      this.selectedContract.invoiceAddress=this.selectedContract.address;
+      if(this.selectedContract.address && this.selectedContract.address.length>3)
+      {
+        var fields=this.selectedContract.address.split(',');        
+        this.selectedContract.invoiceCAP=fields[2];
+        this.selectedContract.invoiceCity=fields[3];
+        this.selectedContract.invoiceProvince=fields[4];
+      }
+    },
+    customerAddressChange() {
+      if(this.selectedCustomer && this.selectedCustomer.address.length>3)
+      {
+        var fields=this.selectedCustomer.address.split(',');
+        this.selectedCustomer.invoiceCAP=fields[2];
+        this.selectedCustomer.invoiceCity=fields[3];
+        this.selectedCustomer.invoiceProvince=fields[4];
+        this.selectedCustomer.state="ITALY";
+      }
+    },
+    invoiceAddressChange() {
+      if(this.selectedContract.invoiceAddress && this.selectedContract.invoiceAddress.length>3)
+      {
+        var fields=this.selectedContract.invoiceAddress.split(',');        
+        this.selectedContract.invoiceCAP=fields[2];
+        this.selectedContract.invoiceCity=fields[3];
+        this.selectedContract.invoiceProvince=fields[4];
+      }      
     },
     async captureCiFront () {
       const image = await Camera.getPhoto({width: 600, height: 350, quality: 100, allowEditing: true, resultType: CameraResultType.base64});

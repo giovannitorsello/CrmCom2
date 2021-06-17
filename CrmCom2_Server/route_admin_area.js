@@ -247,11 +247,47 @@ module.exports = {
 
     ////////////////////REGISTRATION/////////////////////
     app.post(
+      "/adminarea/registration/save_contract",
+      function (req, res) {
+        var customer = req.body.customer;
+        var contract = req.body.contract;
+        var services = req.body.services;
+        //save customer
+        utility.save_customer(customer, resCustomer => {
+          if(resCustomer.status==="OK") {
+            contract.customerId=resCustomer.customer.id;
+            utility.save_contract(contract, resContract =>{
+              if(resContract.status==="OK"){
+                var errContrServices=0;
+                for(var i=0; i<services.length;i++) {
+                  var contrService=utility.save_service(services[i], contract);
+                  if(!contrService && !constrService.id) errContrServices=1;
+                }
+                if(errContrServices)
+                  res.send({
+                    status: "Error",
+                    msg: "Error in save contract",
+                    results: { customer: customer, contract: contract, sevices: services }
+                  });
+                else
+                  res.send({
+                    status: "OK",
+                    msg: "Contract saved",
+                    results: { customer: customer, contract: contract, sevices: services }
+                  });
+              }
+            });
+          }
+        })
+      }
+    );
+    app.post(
       "/adminarea/registration/generate_final_document",
       function (req, res) {
         var customer = req.body.customer;
         var contract = req.body.contract;
-        pdf.compileContractTemplate(customer, contract).then((finalDocument)=> {
+        var services = req.body.services;
+        pdf.compileContractTemplate(customer, contract, services).then((finalDocument)=> {
           var url =
             "http://" +
             config.server.hostname +

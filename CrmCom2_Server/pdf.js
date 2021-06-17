@@ -10,7 +10,7 @@ module.exports = {
     this.app = app;
     this.database = db;
   },  
-  async compileContractTemplate(customer, contract) {
+  async compileContractTemplate(customer, contract, services) {
     const pdfServer = this;
     var baseProcessPath=process.cwd();
 
@@ -86,7 +86,32 @@ module.exports = {
         formField.setText(fieldValue);
     }
     
-    //Services to do
+    //Services to do    
+    if(docInfo && services && services.length>0) {
+      var page = pdfDoc.getPage(1);
+      var xpos=docInfo.servicesTablePosition.xpos;      
+      var ypos=page.getHeight()-docInfo.servicesTablePosition.ypos-15;
+      var xspacing=docInfo.servicesTablePosition.xspacing;
+      var fontSize=docInfo.servicesTablePosition.fontSize;
+      var fields=docInfo.servicesTablePosition.fields;
+      var fieldsLabel=docInfo.servicesTablePosition.fieldsLabel;
+      
+      //header services
+      for(var j=0; j<fields.length;j++) {
+        page.moveTo(xpos+j*xspacing, ypos);
+        page.drawText(fieldsLabel[j], {size : fontSize});
+      }
+      
+      for(var i=0; i<services.length; i++) {        
+        ypos-=fontSize+2;
+        const service=services[i];
+        for(var j=0; j<fields.length;j++) {
+          page.moveTo(xpos+j*xspacing, ypos);
+          var fieldContent=service[fields[j]].toString();
+          page.drawText(fieldContent, {size : fontSize});
+        }
+      }
+    }
 
     //Sign document
     const img = await pdfDoc.embedPng(fs.readFileSync(signatureFile));
@@ -123,6 +148,7 @@ module.exports = {
             var description = docInfo.personalDocumentsImages[i].description;
             var imagePage = pdfDoc.getPage(page);
             var imageFilePath=baseProcessPath+config.paths.customer_identity_document+prefix+customer.uuid+".jpg";
+            if(fs.existsSync(imageFilePath)) {
             const img = await pdfDoc.embedJpg(fs.readFileSync(imageFilePath));
 
             var calc_xpos = xpos;
@@ -137,6 +163,7 @@ module.exports = {
             width: calc_width,
             height: calc_height,
             });
+          }
         }
     }
    
