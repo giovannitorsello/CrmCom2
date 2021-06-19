@@ -423,7 +423,7 @@ export default {
           this.$store.commit("changeContract", ctr);
           this.$router.push("/Contract")
       },
-      activateContract: function(ctr) {
+      activateContract: function(ctr) {        
         ctr.state="active";
         this.$axios.post('/adminarea/contract/update', {contract: ctr})
           .then(response => {
@@ -449,9 +449,21 @@ export default {
                 console.log(error);
             });
       },
-      deleteContract: function(ctr) {
+      deleteContract: function(ctr) {        
         const isConfirmed = confirm("Confermi la cancellazione?");
-        if(isConfirmed) {console.log("Delete confirmed"); return "cancellato";}
+        if(isConfirmed) {
+          this.$axios.post('/adminarea/contract/delete', {contract: ctr})
+          .then(response => {
+                if (response.data.status === "OK") {
+                    this.selectedContract = response.data.contract;
+                    this.$store.commit("changeContract", this.selectedContract);
+                    this.getCustomerContracts();
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        }
         return "";
       },
       getCustomerData: function () {
@@ -532,7 +544,7 @@ export default {
         }
       },
       exit: function() {
-        this.$router.push("/AdminHome");
+        this.$router.push("/AdminDashboard");
       },
       makeToast(string) {
         this.$q.notify({color: 'green-4', textColor: 'white', icon: 'info', message: string});
@@ -585,5 +597,13 @@ export default {
   color: rgb(127, 127, 0);
   background-color: yellow;
   font-style: italic;
+}
+
+.active {
+  background-color: rgb(168, 243, 168);
+}
+
+.suspended {
+  background-color: rgb(177, 171, 171);
 }
 </style>

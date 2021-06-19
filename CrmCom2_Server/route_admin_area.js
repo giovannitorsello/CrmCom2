@@ -260,7 +260,7 @@ module.exports = {
               if(resContract.status==="OK"){
                 var errContrServices=0;
                 for(var i=0; i<services.length;i++) {
-                  var contrService=utility.save_service(services[i], contract);
+                  var contrService=utility.save_contractService(services[i], resContract.contract);
                   if(!contrService && !constrService.id) errContrServices=1;
                 }
                 if(errContrServices)
@@ -289,7 +289,7 @@ module.exports = {
         var services = req.body.services;
         pdf.compileContractTemplate(customer, contract, services).then((finalDocument)=> {
           var url =
-            "http://" +
+            "https://" +
             config.server.hostname +
             ":" +
             config.server.http_port +
@@ -306,6 +306,12 @@ module.exports = {
               msg: "Torna indietro e correggi",
               results: {},
             });
+        }).catch(error => {
+          res.send({
+            status: "Error",
+            msg: "Errore di generazione pdf",
+            results: {},
+          });
         });
 
         /*pdf.createIdentidyDocumentsPage(customer, function () {
@@ -1036,7 +1042,7 @@ module.exports = {
     app.post("/adminarea/serviceTemplate/getByCategory", function (req, res) {
       var category_selected = req.body.category;
       database.entities.serviceTemplate
-        .findAll({ where: { category: category_selected.label } })
+        .findAll({ where: { category: category_selected.value } })
         .then(function (services) {
           if (services !== null) {
             res.send({
@@ -1206,12 +1212,12 @@ module.exports = {
               .then(function (contract) {
                 if (contract !== null) {
                   var contrService = {};
-
+                  //contrService.contractId=idContract;
                   contrService.description = srvTempl.description;
                   contrService.unit = srvTempl.unit;
                   contrService.code = utility.makeUuid();
                   contrService.category = srvTempl.category;
-                  obj_selected.activationPrice = obj_updated.activationPrice;
+                  contrService.activationPrice = srvTempl.activationPrice;
                   contrService.price = srvTempl.price;
                   contrService.vat = srvTempl.vat;
                   contrService.state = "active";
@@ -1228,7 +1234,7 @@ module.exports = {
                     .then(function (objnew) {
                       if (objnew !== null) {
                         objnew.setContract(contract);
-                        objnew.setServiceTemplate(srvTempl);
+                        objnew. setServiceTemplate(srvTempl);
                         res.send({
                           status: "OK",
                           msg: "Service addes successfully",
@@ -1422,7 +1428,7 @@ module.exports = {
     });
 
     app.post("/adminarea/contract/delete", function (req, res) {
-      var objsel = req.session.contract_selected;
+      var objsel = req.body.contract;
       database.entities.contract
         .findOne({ where: { id: objsel.id } })
         .then(function (obj) {

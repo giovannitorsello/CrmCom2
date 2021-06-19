@@ -34,11 +34,11 @@ import createApp from './app.js'
 
 
 
+import qboot_Bootcapacitor from 'boot/capacitor'
+
 import qboot_Booti18n from 'boot/i18n'
 
 import qboot_Bootaxios from 'boot/axios'
-
-import qboot_Bootcapacitor from 'boot/capacitor'
 
 
 
@@ -77,7 +77,7 @@ async function start () {
   }
 
   const urlPath = window.location.href.replace(window.location.origin, '')
-  const bootFiles = [qboot_Booti18n,qboot_Bootaxios,qboot_Bootcapacitor]
+  const bootFiles = [qboot_Bootcapacitor,qboot_Booti18n,qboot_Bootaxios]
 
   for (let i = 0; hasRedirected === false && i < bootFiles.length; i++) {
     if (typeof bootFiles[i] !== 'function') {

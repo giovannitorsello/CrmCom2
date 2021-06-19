@@ -617,6 +617,7 @@ module.exports = {
       .then((cst) => {
         //// Update section
         if (cst && cst.id !== "") {
+          
           if (customer_updated.businnessflag === "on")
             customer_updated.businnessflag = true;
           else customer_updated.businnessflag = false;
@@ -640,8 +641,8 @@ module.exports = {
           cst.vatcode = customer_updated.vatcode;
           cst.sdicode = customer_updated.sdicode;
 
-          cst.username = customer_updated.username;
-          cst.password = customer_updated.password;
+          if(customer_updated.username) cst.username = customer_updated.username;
+          if(customer_updated.password) cst.password = customer_updated.password;
           cst.businessflag = customer_updated.businnessflag;
 
           cst.save().then((cstupdate) => {
@@ -662,7 +663,9 @@ module.exports = {
         }
         //New section
         if (!cst) {
-          customer_updated.uid = utility.makeUuid();
+          customer_updated.uid = this.makeUuid();
+          customer_updated.username=customer_updated.email;
+          customer_updated.password = this.makePassword(10);
           database.entities.customer.create(customer_updated).then((cstnew) => {
             if (cstnew !== null) {
               callback({
@@ -682,16 +685,19 @@ module.exports = {
       });
   },
   save_contract(contract, callback) {
+    if(!contract.uid) contract.uid="0";
     database.entities.contract
       .findOne({
         where: {
-          description: contract.description,
+          uid: contract.uid,
           customerId: contract.customerId,
         },
       })
       .then((item) => {
         if (item === null) {
-          obj.uid = utility.makeUuid();
+          contract.uid = this.makeUuid();
+          contract.description=contract.customerId+"-"+contract.uid;
+          
           database.entities.contract.create(contract).then((contractnew) => {
             if (contractnew !== null) {
               callback({
@@ -716,7 +722,7 @@ module.exports = {
     contrService.unit = service.unit;
     contrService.code = this.makeUuid();
     contrService.category = service.category;
-    obj_selected.activationPrice = service.activationPrice;
+    contrService.activationPrice = service.activationPrice;
     contrService.price = service.price;
     contrService.vat = service.vat;
     contrService.state = "active";
@@ -728,7 +734,7 @@ module.exports = {
     contrService.contractId=contract.id;
     contrService.serviceTemplateId=service.id;
     
-    var newContractService=await database.entities.contractService.save(contrService);
+    var newContractService=await database.entities.contractService.create(contrService);
     if(newContractService.id && newContractService!==0) return newContractService;
     else return null;
   },

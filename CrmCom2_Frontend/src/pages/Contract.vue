@@ -26,7 +26,6 @@
     />
 
     <!--Tab division of contract sections-->
-
     <ValidationObserver ref="FormDeviceCustomer">
       <q-form ref="contractForm" class="q-gutter-md">
         <q-tabs v-model="tab" class="text-teal">
@@ -114,14 +113,19 @@
                   filled
                   label="Categoria"
                   @input="changeCategory"
-                  :options="serviceCategories"
-                  v-model="selectedCategory"
+                  :options="serviceCategories"                  
+                  map-options
+                  v-model="selectedCategory"                
+                  option-label="description"                  
                 />
                 <q-select
                   filled
                   label="Modelli di servizio"
-                  v-model="serviceTemplate"
-                  :options="optionsServiceTemplates"
+                  v-model="selectedServiceTemplate"
+                  :options="serviceTemplates"
+                  option-label="description" 
+                  emit-value
+                  map-options
                 />
                 <div class="col">
                   <img
@@ -318,10 +322,10 @@ export default {
     return {
         tab: "general",
         serviceCategories: [],
-        selectedCategory: {label: "Internet", value: "Internet", icon: ''},
+        selectedCategory: {description: "Vuoto", id: "0"},
         selectedContract: {},
-        selectedService: {label: "", value: ""},
-        serviceTemplate: {label: "", value: ""},
+        selectedService: {description: "Vuoto", id: "0"},
+        selectedServiceTemplate: {description: "Vuoto", id: "0"},
         contracts: [],
         devices: [],
         services: [],
@@ -363,11 +367,11 @@ export default {
       },
       changeCategory: function() {
         const store=this.$store;
+        console.log(this.selectedCategory);
         this.$axios.post('/adminarea/serviceTemplate/getByCategory', {category: this.selectedCategory})
           .then(response => {
                 if (response.data.status === "OK") {
-                    this.serviceTemplates = response.data.serviceTemplates;
-                    this.populateSelectServiceTemplates();
+                    this.serviceTemplates = response.data.serviceTemplates;                    
                 }
             })
             .catch(error => {
@@ -378,9 +382,10 @@ export default {
           this.$axios.post('/adminarea/serviceTemplate/getAllServiceCategories', {})
               .then(response => {
                     if (response.data.status === "OK") {
-                        response.data.serviceCategories.forEach(element => {
-                          this.serviceCategories.push({label: element.description, value: element.value, icon: ''})
-                        });
+                        this.serviceCategories=response.data.serviceCategories;
+                        /*response.data.serviceCategories.forEach(element => {
+                          this.serviceCategories.push({label: element.description, value: element, icon: ''})
+                        });*/
                         this.makeToast(response.data.msg);
                     }
                 })
@@ -393,8 +398,7 @@ export default {
         this.$axios.post('/adminarea/serviceTemplate/getall', {})
           .then(response => {
                 if (response.data.status === "OK") {
-                    this.serviceTemplates = response.data.serviceTemplates;
-                    this.populateSelectServiceTemplates();
+                    
                 }
             })
             .catch(error => {
@@ -428,7 +432,7 @@ export default {
             });
       },
       addService() {
-        var idServ=this.serviceTemplate.value.id;
+        var idServ=this.selectedServiceTemplate.id;
         if(idServ && this.selectedContract.id)
         this.$axios.post('/adminarea/contractService/insert', {idServiceTemplate: idServ, idContract: this.selectedContract.id})
           .then(response => {
@@ -437,6 +441,7 @@ export default {
                     this.$store.commit("changeService", this.selectedService);
                     this.makeToast(response.data.msg);
                     this.services.push(this.selectedService);
+                    this.getContractServices();
                 }
             })
             .catch(error => {
@@ -607,19 +612,6 @@ export default {
                 console.log(error);
             });
         }
-      },
-      populateSelectServiceTemplates() {
-        this.optionsServiceTemplates=[];
-        this.serviceTemplates.forEach((element,index,array) => {
-          this.optionsServiceTemplates.push({
-            label: element.category+"--"+element.description+"--"+element.price+"€",
-            value: element,
-            description: "Modello di servizio predefinito"
-          });
-          if(index===array.length-1) {
-            this.selectedService=this.serviceTemplates[0];
-          }
-        });
       },
       exit: function() {
         this.$router.push("/Customer");

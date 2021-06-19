@@ -31,6 +31,9 @@ export default {
   created() {
     this.$router.push("/AdminDashboard");
   },
+  mounted() {
+    
+  },
   components: {
     LeftMenu
   },

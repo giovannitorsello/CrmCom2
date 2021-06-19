@@ -60,18 +60,18 @@ app.use(config.paths.documentsXsdFolder, express.static(process.cwd() + config.p
 app.use(config.paths.documentsFolder, express.static(process.cwd() + config.paths.documentsFolder));
 app.use(config.paths.contractsFolder, express.static(process.cwd()+config.paths.contractsFolder));
 
-/* to enable https
 const options = {
-  key: fs.readFileSync(process.cwd() +'/certs/key.pem'),
-  cert: fs.readFileSync(process.cwd() +'/certs/cert.pem')
+  key: fs.readFileSync(process.cwd() +'/certs/apiserver/privkey.pem'),
+  cert: fs.readFileSync(process.cwd() +'/certs/apiserver/fullchain.pem')
 };
 
 //http.createServer(options, app).listen(config.server.http_port);
-//https.createServer(options, app).listen(config.server.https_port);
-*/
+//app.listen(config.server.http_port);
+
+https.createServer(options, app).listen(config.server.https_port);
 
 
-app.listen(config.server.http_port);
+
 
 //Init componets and utilities.
 database.setup(app, function () {

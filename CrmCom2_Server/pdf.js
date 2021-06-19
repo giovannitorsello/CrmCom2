@@ -86,7 +86,7 @@ module.exports = {
         formField.setText(fieldValue);
     }
     
-    //Services to do    
+    //Services  
     if(docInfo && services && services.length>0) {
       var page = pdfDoc.getPage(1);
       var xpos=docInfo.servicesTablePosition.xpos;      
@@ -114,27 +114,29 @@ module.exports = {
     }
 
     //Sign document
-    const img = await pdfDoc.embedPng(fs.readFileSync(signatureFile));
-    if (docInfo.signatureImages) {
-        for(var i=0;i<docInfo.signatureImages.length; i++) {
-            var page = docInfo.signatureImages[i].page;
-            var xpos = docInfo.signatureImages[i].xpos;
-            var ypos = docInfo.signatureImages[i].ypos;
-            var height = docInfo.signatureImages[i].height;
+    if(fs.existsSync(signatureFile)) {
+      const img = await pdfDoc.embedPng(fs.readFileSync(signatureFile));
+      if (docInfo.signatureImages) {
+          for(var i=0;i<docInfo.signatureImages.length; i++) {
+              var page = docInfo.signatureImages[i].page;
+              var xpos = docInfo.signatureImages[i].xpos;
+              var ypos = docInfo.signatureImages[i].ypos;
+              var height = docInfo.signatureImages[i].height;
 
-            var imagePage = pdfDoc.getPage(page);
-            var calc_xpos = xpos;
-            var calc_ypos = imagePage.getHeight() - height - ypos;
-            var calc_width = (height / img.height) * img.width;
-            var calc_height = height;
+              var imagePage = pdfDoc.getPage(page);
+              var calc_xpos = xpos;
+              var calc_ypos = imagePage.getHeight() - height - ypos;
+              var calc_width = (height / img.height) * img.width;
+              var calc_height = height;
 
-            imagePage.drawImage(img, {
-            x: calc_xpos,
-            y: calc_ypos,
-            width: calc_width,
-            height: calc_height,
-            });            
-        }
+              imagePage.drawImage(img, {
+              x: calc_xpos,
+              y: calc_ypos,
+              width: calc_width,
+              height: calc_height,
+              });            
+          }
+      }
     }
 
     var imagePage = pdfDoc.addPage(PageSizes.A4);    

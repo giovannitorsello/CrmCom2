@@ -379,25 +379,28 @@ module.exports = {
         contract.save().then((ctrupdate) => {
             ///Find all service contract
             this.entities.contractService.findAll({ where: { contractId: ctrupdate.id } }).then((services) => {
-                if (services)
+                if (services) {
                     services.forEach((ctrServ, indexServ, arrayServ) => {
                         ctrServ.state = contract.state;
-                        ctrServ.save().then((ctrServUpt) => {
+                        ctrServ.save();
                             if (indexServ === arrayServ.length - 1) {
                                 //Update staete of devices
                                 this.entities.deviceCustomer.findAll({ where: { contractId: ctrupdate.id } }).then((devices) => {
                                     if (devices)
+                                    {
                                         devices.forEach(function (dev, indexDev, arrayDev) {
                                             dev.state = contract.state;
-                                            dev.save().then((devUpt) => {
-                                                if (indexDev === arrayDev.length - 1)
-                                                    callback(ctrupdate);
-                                            });
+                                            dev.save();
+                                            if (indexDev === arrayDev.length - 1) 
+                                                callback(ctrupdate);
                                         });
+                                    }
+                                    if(!devices || devices.length===0)
+                                        callback(ctrupdate);
                                 });
-                            }
-                        });
+                            }                        
                     });
+                }
             });
         });
     },
