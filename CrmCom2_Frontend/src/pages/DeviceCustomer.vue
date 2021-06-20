@@ -98,7 +98,7 @@
     <hr class="separator" />
     <template v-if="selectedDevice">
       <h6>Parametri generali</h6>
-      <div id="deviceParametersPrimitives">
+      <div id="deviceParametersPrimitives" v-if="selectedDevice.objData">
         <div
           class="row"
           v-for="(primitive, primitiveName) in objDataPrimitives"
