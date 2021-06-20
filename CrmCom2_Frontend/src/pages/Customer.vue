@@ -3,16 +3,19 @@
     <h6>
       Gestione del cliente
       <strong>{{ customerDescription }}</strong>
-    </h6>
-    <img
+    </h6>    
+    <ValidationObserver v-slot="observer" ref="obs">
+      <img
       src="/img/actions/new.png"
       @click="newCustomer"
       style="width: 48px; height: 48px;"
+      :disabled="observer.invalid"
     />
     <img
       src="/img/actions/save.png"
       @click="saveCustomer"
       style="width: 48px; height: 48px;"
+      :disabled="observer.invalid"
     />
     <img
       src="/img/actions/delete.png"
@@ -25,7 +28,7 @@
       style="width: 48px; height: 48px;"
     />
 
-    <ValidationObserver ref="formCustomer">
+
       <q-form ref="customerForm" class="q-gutter-md">
         <div class="row">
           <div class="col">
@@ -34,7 +37,8 @@
           <div class="col">
             <q-checkbox
               label="Da fatturare"
-              v-model="selectedCustomer.businnessflag"
+              v-model="isBusinness"
+              @input="changeBusinness()"
             />
           </div>
         </div>
@@ -169,7 +173,7 @@
                   <ValidationProvider
                     name="Indirizzo Sede Azienda"
                     immediate
-                    rules="required|alpha_num"
+                    rules="required|address"
                     v-slot="{ errors }"
                   >
                     <q-input
@@ -397,6 +401,7 @@ export default {
         tab: 'person',
         isPwd: true,
         isCompany: false,
+        isBusinness: true,
         selectedCustomer: {},
         selectedContract: {},
         contracts: [],
@@ -470,7 +475,8 @@ export default {
         if(this.$store.state.customer) {
           this.selectedCustomer=Object.assign({}, this.$store.state.customer);
           if(this.selectedCustomer.vatcode==="") this.isCompany = false;
-          else {this.isCompany = true; this.tab="company";}
+          else {this.isCompany = true; this.tab="company";}          
+          this.isBusinness=this.selectedCustomer.businessflag;          
           this.getCustomerContracts();
         }
       },
@@ -499,32 +505,33 @@ export default {
               this.isCompanyBtn.caption = "<span><i class='fa fa-home'></i> Privato</span>";
           }
       },
+      changeBusinness: function() {
+        if (this.isBusinness === false) {
+              this.selectedCustomer.businessflag=false;
+        }
+        else if (this.isBusinness === true) {
+            this.selectedCustomer.businessflag=true;
+        }        
+      },
       newCustomer: function() {
         this.selectedCustomer={};
         this.contracts = [];
         this.selectedContract={}
         this.$store.commit("changeCustomer",this.selectedCustomer);
       },
-      async saveCustomer() {
-        const valid = true;
-        if(valid) {
+      async saveCustomer() {        
         this.$axios.post('/adminarea/customer/update', {customer: this.selectedCustomer})
           .then(response => {
                 if (response.data.status === "OK") {
                     this.selectedCustomer = response.data.customer;
                     this.$store.commit("changeCustomer", this.selectedCustomer);
                     this.makeToast(response.data.msg);
-                    this.getCustomerData();
-                    alert("Cliente inserito");
+                    this.getCustomerData();                    
                 }
             })
             .catch(error => {
                 console.log(error);
-            });
-        }
-        else {
-          alert("Dati errati controlla i campi inseriti");
-        }
+            });        
       },
       deleteCustomer: function() {
         const isConfirmed = confirm("Confermi la cancellazione?");

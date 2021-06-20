@@ -256,12 +256,15 @@ module.exports = {
         utility.save_customer(customer, resCustomer => {
           if(resCustomer.status==="OK") {
             contract.customerId=resCustomer.customer.id;
-            utility.save_contract(contract, resContract =>{
+            utility.save_contract(contract, (resContract) => {
               if(resContract.status==="OK"){
                 var errContrServices=0;
                 for(var i=0; i<services.length;i++) {
-                  var contrService=utility.save_contractService(services[i], resContract.contract);
-                  if(!contrService && !constrService.id) errContrServices=1;
+                  database.entities.serviceTemplate.findOne({ where: {id: services[i].id} }).then(async (serviceTempl)=> {
+                    var contrService=await utility.save_contractService(serviceTempl, resContract.contract);
+                    if(!contrService && !constrService.id) 
+                      errContrServices=1;
+                  });                  
                 }
                 if(errContrServices)
                   res.send({
@@ -1477,7 +1480,7 @@ module.exports = {
       database.entities.customer
         .findOne({ where: { id: userId } })
         .then(function (customer) {
-          res.send({ status: "OK", msg: "Customer found", data: customer });
+          res.send({ status: "OK", msg: "Customer found", customer: customer });
         });
     });
 
@@ -1533,10 +1536,7 @@ module.exports = {
         .then((cst) => {
           //// Update section
           if (cst && cst.id !== "") {
-            if (customer_updated.businnessflag === "on")
-              customer_updated.businnessflag = true;
-            else customer_updated.businnessflag = false;
-
+            cst.businessflag = customer_updated.businessflag;
             cst.firstname = customer_updated.firstname;
             cst.lastname = customer_updated.lastname;
             cst.email = customer_updated.email;
@@ -1558,8 +1558,7 @@ module.exports = {
 
             cst.username = customer_updated.username;
             cst.password = customer_updated.password;
-            cst.businessflag = customer_updated.businnessflag;
-
+            
             cst.save().then(function (cstupdate) {
               if (cstupdate !== null) {
                 res.send({

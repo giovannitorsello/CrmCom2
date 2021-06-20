@@ -616,12 +616,8 @@ module.exports = {
       })
       .then((cst) => {
         //// Update section
-        if (cst && cst.id !== "") {
-          
-          if (customer_updated.businnessflag === "on")
-            customer_updated.businnessflag = true;
-          else customer_updated.businnessflag = false;
-
+        if (cst && cst.id !== "") {          
+          cst.businessflag = customer_updated.businessflag;
           cst.firstname = customer_updated.firstname;
           cst.lastname = customer_updated.lastname;
           cst.email = customer_updated.email;
@@ -643,7 +639,7 @@ module.exports = {
 
           if(customer_updated.username) cst.username = customer_updated.username;
           if(customer_updated.password) cst.password = customer_updated.password;
-          cst.businessflag = customer_updated.businnessflag;
+          
 
           cst.save().then((cstupdate) => {
             if (cstupdate !== null) {
@@ -716,7 +712,7 @@ module.exports = {
         }
       });
   },
-  async save_contractService(service, contract, callback) {    
+  async save_contractService(service, contract, callback) {
     var contrService = {};
     contrService.description = service.description;
     contrService.unit = service.unit;
@@ -731,11 +727,13 @@ module.exports = {
     contrService.nopaydaysbeforedeactivation =service.nopaydaysbeforedeactivation;
     contrService.lastbillingdate = service.lastbillingdate;
     contrService.dayforexpirationwarning = service.dayforexpirationwarning;
-    contrService.contractId=contract.id;
-    contrService.serviceTemplateId=service.id;
+    //contrService.contractId=contract.id;
+    //contrService.serviceTemplateId=service.id;
     
     var newContractService=await database.entities.contractService.create(contrService);
+    newContractService.setContract(contract);
+    newContractService.setServiceTemplate(service);
     if(newContractService.id && newContractService!==0) return newContractService;
     else return null;
-  },
+    },
 };

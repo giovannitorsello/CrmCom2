@@ -79,8 +79,13 @@ export default {
       selectCustomer(evt, cst, index) {
           const store=this.$store;
           this.showCustomerSearch=false;
-          store.commit("changeCustomer", cst);
-          this.$router.push("/Customer");
+          this.$axios.post("/adminarea/customer/get_by_id", {customerId: cst.id}).then (response => {
+            if (response.data.status === "OK") {              
+              store.commit("changeCustomer", response.data.customer);
+              this.$router.push("/Customer");
+            }            
+          });
+          
       }
   },
   computed: mapState({

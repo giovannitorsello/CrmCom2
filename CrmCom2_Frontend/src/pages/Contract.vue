@@ -251,6 +251,8 @@
           </q-tab-panel>
           <q-tab-panel name="devices">
             <div v-if="devices">
+              <q-btn @click="addDevice">Aggiungi dispositivo</q-btn>
+
               <q-table
                 title="Dispositivi associati al contratto"
                 :data="devices"
@@ -357,6 +359,10 @@ export default {
     }
   },
   methods: {
+      addDevice() {
+        this.$store.commit("changeContract", this.selectedContract);
+        this.$router.push("/DeviceCustomer");
+      },
       getContractData() {
         const store=this.$store;
         this.selectedContract=Object.assign({}, this.$store.state.contract);

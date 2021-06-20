@@ -1,9 +1,13 @@
 <template>
   <div id="device">
     <h6>
-      Gestione dispositivi
-      <strong>{{customerDescription}}</strong>
+      Gestione dispositivi      
     </h6>
+    <p>
+      <strong>Cliente: {{selectedCustomer.id}}</strong>
+      <br/>
+      <strong>Contratto: {{selectedContract.id}}</strong>
+    </p>
 
     <img src="/img/actions/new.png"     @click="newDevice" style="width: 48px; height: 48px;" />
     <img src="/img/actions/save.png"    @click="saveDevice" style="width: 48px; height: 48px;" />
@@ -16,21 +20,16 @@
       <div class="row">
         <div class="col">
           <ValidationProvider name="Tecnologia" immediate rules="required" v-slot="{ errors }">
-            <select
-              id="companyasset"
-              name="companyasset"
-              placeorder="Tecnologia utilizzata"
-              v-model="companyasset"
-              class="form-control form-control-user"
-              aria-label="Tecnologia internet"
-              @change="initDeviceProperties"
-            >
-              <option
-                v-for="companyasset in companyassets"
-                v-bind:key="companyasset.id"
-                v-bind:value="companyasset"
-              >{{ companyasset.company }} ({{companyasset.techasset}})</option>
-            </select>
+            <q-select
+                filled
+                label="Asset"
+                @input="changeAsset"
+                :options="selectAssetOptions"
+                v-model="selectedAsset"
+                map-options                  
+                option-label="label" 
+                option-value="value"
+            />            
             <span class="error">{{ errors[0] }}</span>
           </ValidationProvider>
         </div>
@@ -99,7 +98,7 @@
     <hr class="separator" />
     <template v-if="selectedDevice">
       <h6>Parametri generali</h6>
-      <div id="deviceParametersPrimitives" v-if="selectedDevice.objData">
+      <div id="deviceParametersPrimitives">
         <div
           class="row"
           v-for="(primitive, primitiveName) in objDataPrimitives"
@@ -166,12 +165,18 @@ import companyassetsJson from '../config/companyassets.json'
 export default {
   data() {
     return {
+      selectedCustomer: {},
+      selectedContract: {},
+      selectedAsset: {},
+      customerDescription: "",
+      contractDescription: "",
+      selectAssetOptions: [],
       companyassets: companyassetsJson,
       companyasset: {},
       selectedDevice: {},  
       devices: {},
       objDataSection: {},
-      objDataPrimitives: {}                   
+      objDataPrimitives: {},                    
     }
   },
   components: {
@@ -179,17 +184,33 @@ export default {
     ValidationObserver
   },
   methods: {
-    initDeviceProperties() {
-      if(this.companyasset) {
+    populateSelectAsset() {
+      this.companyassets.forEach(element => {
+        this.selectAssetOptions.push({label: element.company+" -- "+element.techasset, value: element});        
+      });
+    },
+    changeAsset() {
       this.objDataSection=[];
       this.objDataPrimitives=[];
-
-      this.selectedDevice.objData=this.companyasset.propDeviceStructure;
-      this.$store.commit("changeDeviceCustomer", this.selectedDevice);  
+      this.selectedDevice.objData={};
+      this.companyasset=this.selectedAsset.value;
+      var res=Object.assign(this.selectedDevice.objData, this.companyasset.propDeviceStructure)      
+      this.$store.commit("changeDeviceCustomer", this.selectedDevice); 
+      this.selectedDevice.id="";
       this.parseDeviceObjData(); 
-      console.log("Modify device structure");
-      console.log(this.selectedDevice);
-      }
+    },       
+    parseDeviceObjData: function() {
+      //if(this.selectedDevice && this.selectedDevice.id && this.selectedDevice.objData)
+      for (const sectionName in this.selectedDevice.objData) {        
+        if(typeof(this.selectedDevice.objData[sectionName])==="object") {
+          console.log("Found object: "+sectionName);
+          this.objDataSection[sectionName]=this.selectedDevice.objData[sectionName];
+        }
+        else {
+          console.log("Found simple data: "+sectionName);
+          this.objDataPrimitives[sectionName]=this.selectedDevice.objData[sectionName];          
+        }
+      }              
     },
     getDeviceData: function() {
       this.selectedDevice= Object.assign({}, this.$store.state.deviceCustomer);  
@@ -197,22 +218,8 @@ export default {
       if(this.selectedDevice.objData===null) this.selectedDevice={objData: {}};
       this.$store.commit("changeDeviceCustomer", this.selectedDevice);
       
-      //init correct companyasset in selection
-      this.companyassets.forEach(element => {
-        if(element.company===this.selectedDevice.companyasset && element.techasset===this.selectedDevice.techasset)
-          this.companyasset=element;
-      });   
-      this.parseDeviceObjData(); 
-    },
-    parseDeviceObjData: function() {
-      if(this.selectedDevice && this.selectedDevice.id && this.selectedDevice.objData)
-      for (const sectionName in this.selectedDevice.objData) {
-        if(typeof(this.selectedDevice.objData[sectionName])==="object") {
-          this.objDataSection[sectionName]=this.selectedDevice.objData[sectionName];
-        }
-        else
-          this.objDataPrimitives[sectionName]=this.selectedDevice.objData[sectionName];          
-      }              
+      //init correct companyasset in selection        
+      this.parseDeviceObjData();
     },
     newDevice() {
       this.selectedDevice={};        
@@ -286,6 +293,9 @@ export default {
     }
   }),
   mounted () {
+    this.selectedCustomer=Object.assign({}, this.$store.state.customer);
+    this.selectedContract=Object.assign({}, this.$store.state.contract);
+    this.populateSelectAsset();
     this.getDeviceData();       
   },
     beforeRouteEnter(to, from, next) {

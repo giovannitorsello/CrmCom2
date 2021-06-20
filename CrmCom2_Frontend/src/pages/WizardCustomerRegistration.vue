@@ -968,6 +968,40 @@ export default {
               console.log(error);
           });
     },
+    initCustomerDebugValues() {
+      this.selectedCustomer= {
+            uuid: this.uuid,
+            firstname: "Giovani",
+            lastname: "Torsello",
+            email: "giovanni.torsello@gmail.com",
+            pec: "giovanni.torsello@pec.it",
+            numci: "0000000000",
+            codfis: "TRSGNN73H26I549A",
+            phone: "3939241987",
+            mobilephone: "3939241987",
+            address: "Via Pasubio, 16, 73010, Soleto, LE",
+            postalcode: "73010",
+            city: "Soleto",
+            state: "ITALY",
+            company: "WIFINETCOM SRL",
+            companyphone: "0833599327",
+            companyaddress: "Via Agnesi, 16, 73054, Cssarano, LE",
+            companypec: "wifinetcom@pec.it",
+            vatcode: "03686220751",
+            sdicode: "AAAAA",
+            username: "giovanni.torsello@gmail.com",
+            password: "1234",
+            onetimetemppassword: "00000",
+            businessflag: 1
+      }
+      this.selectedContract={
+        address: "Via Pasubio, 16, 73010, Soleto, LE",
+        invoiceAddress: "Via Pasubio, 16, 73010, Soleto, LE",
+        invoiceCity: "Soleto",
+        invoiceCAP: "73010",
+        invoiceProvince: "LE"
+      }
+    },
     makeToast(string) {
       this.$q.notify({color: 'green-4', textColor: 'white', icon: 'info', message: string});
     }
@@ -978,7 +1012,8 @@ export default {
     this.getAllServiceCategories();
     this.getUuid();
     this.selectedCustomer.uuid=this.uuid;
-    console.log(MediaDevices);
+    if(process.env.NODE_ENV === 'development')
+      this.initCustomerDebugValues();
   },
   computed: mapState({
     user: 'user',

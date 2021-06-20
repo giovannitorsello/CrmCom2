@@ -24,7 +24,7 @@
             <ValidationProvider
               name="Descrizione"
               immediate
-              rules="required|alpha_spaces"
+              rules="required"
               v-slot="{ errors }"
             >
               <q-input
@@ -335,7 +335,7 @@ export default {
 
     },
     newServiceTemplate: function (){
-      this.selectedServiceTemplate.id="";
+      delete this.selectedServiceTemplate.id;
       this.saveServiceTemplate();
     },
     saveServiceTemplate: function (){
