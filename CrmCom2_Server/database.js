@@ -138,7 +138,7 @@ module.exports = {
             duration: { type: Sequelize.INTEGER, defaultValue: 365 },
             state: { type: Sequelize.STRING, defaultValue: 'in compilazione' }, //attivo, sospeso, annullato, scaduto
             billingperiod: { type: Sequelize.INTEGER, defaultValue: 60 },
-            automaticrenew: { type: Sequelize.INTEGER, defaultValue: 1 },                     
+            automaticrenew: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },                     
             businessflag: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: true },
             lastbillingdate: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
             creationdate: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },

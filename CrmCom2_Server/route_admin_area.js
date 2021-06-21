@@ -1400,14 +1400,6 @@ module.exports = {
       database.entities.contract
         .findOne({ where: { id: obj_updated.id } })
         .then(function (obj) {
-          if (obj_updated.automaticrenew === "on")
-            obj_updated.automaticrenew = true;
-          else obj_updated.automaticrenew = false;
-
-          if (obj_updated.businessflag === "on")
-            obj_updated.businessflag = true;
-          else obj_updated.businessflag = false;
-
           obj.description = obj_updated.description;
           obj.address = obj_updated.address;
           obj.state = obj_updated.state;

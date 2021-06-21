@@ -24,6 +24,11 @@
       @click="exit"
       style="width: 48px; height: 48px"
     />
+    <img
+      src="/img/actions/print.png"
+      @click="printContract"
+      style="width: 48px; height: 48px"
+    />
 
     <!--Tab division of contract sections-->
     <ValidationObserver ref="FormDeviceCustomer">
@@ -31,6 +36,7 @@
         <q-tabs v-model="tab" class="text-teal">
           <q-tab name="general" icon="article" label="Generale" />
           <q-tab name="services" icon="euro_symbol" label="Servizi" />
+          <q-tab name="documents" icon="card_membership" label="Documenti" />
           <q-tab name="invoice" icon="receipt" label="Fatturazione" />
           <q-tab name="devices" icon="router" label="Dispositivi" />
         </q-tabs>
@@ -87,7 +93,7 @@
                 >
                   <q-checkbox
                     label="Rinnovo Automatico"
-                    v-model="selectedContract.automaticRenew"
+                    v-model="selectedContract.automaticrenew"
                   />
                   <span class="error">{{ errors[0] }}</span>
                 </ValidationProvider>
@@ -99,7 +105,7 @@
                 >
                   <q-checkbox
                     label="Da fatturare"
-                    v-model="selectedContract.businnessFlag"
+                    v-model="selectedContract.businessflag"
                   />
                   <span class="error">{{ errors[0] }}</span>
                 </ValidationProvider>
@@ -113,17 +119,17 @@
                   filled
                   label="Categoria"
                   @input="changeCategory"
-                  :options="serviceCategories"                  
+                  :options="serviceCategories"
                   map-options
-                  v-model="selectedCategory"                
-                  option-label="description"                  
+                  v-model="selectedCategory"
+                  option-label="description"
                 />
                 <q-select
                   filled
                   label="Modelli di servizio"
                   v-model="selectedServiceTemplate"
                   :options="serviceTemplates"
-                  option-label="description" 
+                  option-label="description"
                   emit-value
                   map-options
                 />
@@ -194,6 +200,129 @@
                 </template>
               </q-table>
             </div>
+          </q-tab-panel>
+          <q-tab-panel name="documents">
+            <!-- Identity card -->            
+          <div class="row">
+            <div class="col">
+              <ValidationProvider
+                name="Numero documento"
+                immediate
+                rules="required"
+                v-slot="{ errors }"
+              >
+                <q-input
+                  label="Numero documento"
+                  v-model="selectedCustomer.numci"                      
+                />
+                <span class="error">{{ errors[0] }}</span>
+              </ValidationProvider>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <q-btn                    
+                color="primary"
+                style="width: 300px"
+                label="Carta identità retro (camera)"
+                @click="captureCiFront"
+              >
+                <img :src="imageCiFront" style="width: 100px" />
+              </q-btn>
+              <q-uploader                    
+                auto-upload
+                :factory="uploadCiFront"
+                accept=".jpg"
+                max-file-size="2048000"
+                style="max-width: 300px"
+                label="Acquisizione da file (solo jpg)"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <q-btn                    
+                color="primary"
+                style="width: 300px"
+                label="Carta identità retro (camera)"
+                @click="captureCiBack"
+              >
+                <img :src="imageCiBack" style="width: 100px" />
+              </q-btn>
+              <q-uploader                   
+                auto-upload
+                :factory="uploadCiBack"
+                accept=".jpg"
+                max-file-size="2048000"
+                style="max-width: 300px"
+                label="Acquisizione da file (solo jpg)"
+              />
+            </div>
+          </div>
+          
+
+          <!--Identity ficalcode/health card -->
+          <div class="row">
+            <div class="col">
+              <ValidationProvider
+                name="Codice fiscale"
+                immediate
+                rules="required|codfis"
+                v-slot="{ errors }"
+              >
+                <q-input
+                  label="Codice fiscale"
+                  v-model="selectedCustomer.codfis"
+                  type="codfis"
+                />
+                <span class="error">{{ errors[0] }}</span>
+              </ValidationProvider>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <q-btn                    
+                color="primary"
+                style="width: 300px"
+                label="Codice fiscale fronte (camera)"
+                @click="captureCfFront"
+              >
+                <img :src="imageCfFront" style="width: 100px" />
+              </q-btn>
+              <q-uploader                    
+                auto-upload
+                :factory="uploadCfFront"
+                max-file-size="2048000"
+                accept=".jpg"
+                style="max-width: 300px"
+                label="Acquisizione da file (solo jpg)"
+              />
+            </div>
+          </div>
+
+          <div class="row" style="with: 100%">
+            <div class="col">
+              <q-btn                    
+                color="primary"
+                style="width: 300px"
+                label="Codice fiscale retro (camera)"
+                @click="captureCfBack"
+              >
+                <img :src="imageCfBack" style="width: 100px" />
+              </q-btn>
+              <q-uploader                    
+                auto-upload
+                :factory="uploadCfBack"
+                max-file-size="2048000"
+                accept=".jpg"
+                style="max-width: 300px"
+                label="Acquisizione da file (solo jpg)"
+              />
+            </div>
+          </div>
+          
           </q-tab-panel>
           <q-tab-panel name="invoice">
             <div class="row">
@@ -318,20 +447,28 @@
 <script lang="js">
 import { mapState } from 'vuex'
 import {Store} from '../store'
+import { Plugins, CameraResultType } from '@capacitor/core'
+const { Camera } = Plugins
 
 export default {
   data() {
     return {
         tab: "general",
+        contractDocumentUrl: "",
         serviceCategories: [],
         selectedCategory: {description: "Vuoto", id: "0"},
         selectedContract: {},
+        selectedCustomer: {},
         selectedService: {description: "Vuoto", id: "0"},
         selectedServiceTemplate: {description: "Vuoto", id: "0"},
         contracts: [],
         devices: [],
         services: [],
         serviceTemplates: [],
+        imageCfFront: '',
+        imageCfBack: '',
+        imageCiFront: '',
+        imageCiBack: '',
         optionsServiceTemplates: [],
         pagination: {rowsPerPage: 0},
         columnsTableServices: [
@@ -356,6 +493,7 @@ export default {
                   {name: "ipv4",        label: "Ip",             field: row => {if(row.ipv6) return row.ipv6; else return row.ipv4;}, sortable: true},
                   {name: "mac",         label: "Mac",            field: row => row.mac}
                   ],
+    
     }
   },
   methods: {
@@ -366,10 +504,32 @@ export default {
       getContractData() {
         const store=this.$store;
         this.selectedContract=Object.assign({}, this.$store.state.contract);
+        this.selectedCustomer=Object.assign({}, this.$store.state.customer);
         this.getAllServiceCategories();
         this.getServiceTemplates();
         this.getContractServices();
         this.getContractDevices();
+      },
+      printContract: function() {
+        this.$store.commit("changeCustomer", this.selectedCustomer);
+        this.$store.commit("changeContract", this.selectedContract);
+        this.$axios.post('/adminarea/registration/generate_final_document', {
+          customer: this.selectedCustomer,
+          contract: this.selectedContract,
+          services: this.services
+        })
+        .then(response => {
+            if (response.data.status === "OK") {
+              this.contractDocumentUrl=response.data.results.urlFinalDocument;
+              console.log(this.contractDocumentUrl);
+              window.open(this.contractDocumentUrl);
+              this.makeToast(response.data.msg);
+            }
+          })
+          .catch(error => {
+            console.log(error);
+            this.makeToast("Si è verificato un errore");
+          });
       },
       changeCategory: function() {
         const store=this.$store;
@@ -377,7 +537,7 @@ export default {
         this.$axios.post('/adminarea/serviceTemplate/getByCategory', {category: this.selectedCategory})
           .then(response => {
                 if (response.data.status === "OK") {
-                    this.serviceTemplates = response.data.serviceTemplates;                    
+                    this.serviceTemplates = response.data.serviceTemplates;
                 }
             })
             .catch(error => {
@@ -404,7 +564,7 @@ export default {
         this.$axios.post('/adminarea/serviceTemplate/getall', {})
           .then(response => {
                 if (response.data.status === "OK") {
-                    
+
                 }
             })
             .catch(error => {
@@ -583,6 +743,7 @@ export default {
         }
       },
       async saveContract() {
+        console.log(this.selectedContract);
         const valid = true;
         if(valid) {
         this.$axios.post('/adminarea/contract/update', {contract: this.selectedContract})
@@ -618,6 +779,80 @@ export default {
                 console.log(error);
             });
         }
+      },
+      captureCiFront () {
+        Camera.getPhoto({width: 600, height: 350, quality: 100, allowEditing: true, resultType: CameraResultType.base64}).then(image => {
+          this.imageCiFront = "data:image/png;base64, "+image.base64String;
+          this.uploadIdentityDocumentImage("CiFront-"+this.uuid, image.base64String);
+        })
+        .catch(err => console.log("No image: " +err));
+      },
+      captureCiBack () {
+        Camera.getPhoto({width: 600, height: 350, quality: 100, allowEditing: true, resultType: CameraResultType.base64}).then(image => {
+          this.imageCiBack = "data:image/png;base64, "+image.base64String;
+          this.uploadIdentityDocumentImage("CiBack-"+this.uuid, image.base64String);
+        })
+        .catch(err => console.log("No image: " +err));
+      },
+      captureCfFront () {
+        Camera.getPhoto({width: 600, height: 350, quality: 100, allowEditing: true, resultType: CameraResultType.base64}).then(image => {
+          this.imageCfFront = "data:image/png;base64, "+image.base64String
+          this.uploadIdentityDocumentImage("CfFront-"+this.uuid, image.base64String);
+        })
+        .catch(err => console.log("No image: " +err));
+      },
+      captureCfBack () {
+        Camera.getPhoto({width: 600, height: 350, quality: 100, allowEditing: true, resultType: CameraResultType.base64}).then(image => {
+          this.imageCfBack = "data:image/png;base64, "+image.base64String;
+          this.uploadIdentityDocumentImage("CfBack-"+this.uuid, image.base64String);
+        })
+        .catch(err => console.log("No image: " +err));
+      },
+      uploadCiFront(file) {
+        let fileName="CiFront-"+this.selectedContract.uid+".jpg";
+        this.uploadIdentityDocumentFile(fileName,file);
+      },
+      uploadCiBack(file) {
+        let fileName="CiBack-"+this.selectedContract.uuid+".jpg";
+        this.uploadIdentityDocumentFile(fileName,file);
+      },
+      uploadCfFront(file) {
+        let fileName="CfFront-"+this.selectedContract.uuid+".jpg";
+        this.uploadIdentityDocumentFile(fileName,file);
+      },
+      uploadCfBack(file) {
+        let fileName="CfBack-"+this.selectedContract.uuid+".jpg";
+        this.uploadIdentityDocumentFile(fileName,file);
+      },
+      uploadIdentityDocumentImage(imageName, imageData) {
+        let data = new FormData();
+        data.append('imageName', imageName);
+        data.append('file', imageData);
+        this.$axios.post('/adminarea/upload/identity_document/image', data, {header : {'Content-Type' : 'image/png'}})
+          .then(response => {
+              if (response.data.status === "OK") {
+                  this.makeToast(response.data.msg);
+              }
+            })
+            .catch(error => {
+                console.log(error);
+                this.makeToast("Si è verificato un errore");
+            });
+      },
+      uploadIdentityDocumentFile (fileName, file) {
+        let data = new FormData();
+        data.append('fileName', fileName);
+        data.append('file', file[0]);
+        this.$axios.post('/adminarea/upload/identity_document/file', data, {headers: {'Content-Type': 'multipart/form-data'}})
+        .then(response => {
+            if (response.data.status === "OK") {
+                this.makeToast(response.data.msg);
+            }
+          })
+          .catch(error => {
+              console.log(error);
+              this.makeToast("Si è verificato un errore");
+          });
       },
       exit: function() {
         this.$router.push("/Customer");

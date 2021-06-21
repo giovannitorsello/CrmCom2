@@ -573,13 +573,15 @@
 
         <!-- Step 9 final check and signature -->
         <div class="row" v-if="step == 9">
-          <Signature :uuid="uuid"></Signature>
-          <q-btn
-            color="primary"
-            icon="document"
-            label="Salva il contratto definitivamente"
-            @click="saveContract()"
-          />
+          <div class="col">
+            <Signature :uuid="uuid"></Signature>
+            <q-btn
+              color="primary"
+              icon="document"
+              label="Salva il contratto definitivamente"
+              @click="saveContract()"
+            />
+          </div>
         </div>
 
         <div id="buttons" class="barButtons">
@@ -639,9 +641,9 @@ import { mapState } from 'vuex'
 import {Store} from '../store'
 import { ValidationProvider, ValidationObserver, extend, localize } from 'vee-validate';
 import validator from "./validator"
-import { Plugins, CameraResultType } from '@capacitor/core'
 import pdf from 'vue-pdf'
 import Signature from "../components/Signature.vue"
+import { Plugins, CameraResultType } from '@capacitor/core'
 const { Camera } = Plugins
 
 
