@@ -24,22 +24,24 @@ const xmlRecipientMigrationService = require("fs").readFileSync(
   "utf8"
 );
 
-const options = {
-  key: fs.readFileSync(
-    workdir + "/certs/olo2olo.wifinetcom.net/privkey.pem",
-    "utf8"
-  ),
-  cert: fs.readFileSync(
-    workdir + "/certs/olo2olo.wifinetcom.net/cert.pem",
-    "utf8"
-  ),
-  ca: fs.readFileSync(
-    workdir + "/certs/olo2olo.wifinetcom.net/chain.pem",
-    "utf8"
-  ),
-};
+if (config.olo2oloServer.enable) {
+  const options = {
+    key: fs.readFileSync(
+      workdir + "/certs/olo2olo.wifinetcom.net/privkey.pem",
+      "utf8"
+    ),
+    cert: fs.readFileSync(
+      workdir + "/certs/olo2olo.wifinetcom.net/cert.pem",
+      "utf8"
+    ),
+    ca: fs.readFileSync(
+      workdir + "/certs/olo2olo.wifinetcom.net/chain.pem",
+      "utf8"
+    ),
+  };
 
-const olo2oloApp = express();
+  const olo2oloApp = express();
+}
 
 module.exports = {
   mainApp: {},
