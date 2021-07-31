@@ -10,28 +10,28 @@
     </p>
 
     <img
-      src="asset/img/actions/new.png"
+      src="./img/actions/new.png"
       @click="newDevice"
       style="width: 48px; height: 48px;"
     />
     <img
-      src="asset/img/actions/save.png"
+      src="./img/actions/save.png"
       @click="saveDevice"
       style="width: 48px; height: 48px;"
     />
     <img
-      src="asset/img/actions/delete.png"
+      src="./img/actions/delete.png"
       @click="deleteDevice"
       style="width: 48px; height: 48px;"
     />
     <img
-      src="asset/img/actions/eye.svg"
+      src="./img/actions/eye.svg"
       @click="monitorDevice"
       style="width: 48px; height: 48px;"
       v-bind:class="monitorClassBackground"
     />
     <img
-      src="asset/img/actions/exit.png"
+      src="./img/actions/exit.png"
       @click="exit"
       style="width: 48px; height: 48px;"
     />

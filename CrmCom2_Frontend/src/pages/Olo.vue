@@ -5,17 +5,17 @@
       <strong>{{ selectedOlo.company }}</strong>
     </h6>
     <img
-      src="asset/img/actions/new.png"
+      src="./img/actions/new.png"
       @click="newOlo"
       style="width: 48px; height: 48px"
     />
     <img
-      src="asset/img/actions/save.png"
+      src="./img/actions/save.png"
       @click="saveOlo"
       style="width: 48px; height: 48px"
     />
     <img
-      src="asset/img/actions/delete.png"
+      src="./img/actions/delete.png"
       @click="deleteOlo"
       style="width: 48px; height: 48px"
     />
@@ -478,12 +478,12 @@
           <q-tr :props="props" v-bind:class="props.row.state">
             <q-td auto-width>
               <img
-                src="asset/img/actions/open.png"
+                src="./img/actions/open.png"
                 style="width: 32px; height: 32px"
                 v-on:click="openOlo(props.row)"
               />
               <img
-                src="asset/img/actions/delete.png"
+                src="./img/actions/delete.png"
                 style="width: 32px; height: 32px; xfill: gray"
                 v-on:click="deleteOlo(props.row)"
               />

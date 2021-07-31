@@ -38,19 +38,19 @@
         <q-tr :props="props" v-bind:class="props.row.state">
           <q-td auto-width>
             <img
-              src="asset/img/actions/open.png"
+              src="./img/actions/open.png"
               v-on:click="openSiteBackbone(props.row)"
               style="width: 32px; height: 32px;"
             />
             <img
-              src="asset/img/actions/link.png"
+              src="./img/actions/link.png"
               v-if="selectedSiteBackbone.id"
               v-on:click="connectSiteBackbone(props.row)"
               style="width: 32px; height: 32px; xfill: gray;"
             />
 
             <img
-              src="asset/img/actions/delete.png"
+              src="./img/actions/delete.png"
               v-on:click="deleteSiteBackbone(props.row)"
               style="width: 32px; height: 32px; xfill: gray;"
             />
@@ -64,8 +64,8 @@
       <b>{{ selectedSiteBackbone.description }}</b>
     </h5>
 
-    <img @click="newSiteBackbone()" src="asset/img/actions/new.png" style="width: 64px; height: 64px;" />
-    <img @click="saveSiteBackbone()" src="asset/img/actions/save.png" style="width: 64px; height: 64px;" />
+    <img @click="newSiteBackbone()" src="./img/actions/new.png" style="width: 64px; height: 64px;" />
+    <img @click="saveSiteBackbone()" src="./img/actions/save.png" style="width: 64px; height: 64px;" />
 
     <ValidationObserver ref="formSite">
       <q-form ref="siteForm" class="q-gutter-md">
@@ -142,13 +142,13 @@
         </div>
         <div class="col">
           <img
-            src="asset/img/actions/open.png"
+            src="./img/actions/open.png"
             alt="apri"
             style="width: 32px; height: 32px;"
             v-on:click="openSiteBackbone(site)"
           />
           <img
-            src="asset/img/actions/delete.png"
+            src="./img/actions/delete.png"
             alt="elimina"
             style="width: 32px; height: 32px; xfill: gray;"
             v-on:click="disconnectSiteBackbone(site)"

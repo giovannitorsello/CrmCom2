@@ -3,17 +3,17 @@
     <h6 class="h4 text-gray-900 mb-4">Configurazione Modelli di Servizio</h6>
 
     <img
-      src="asset/img/actions/new.png"
+      src="./img/actions/new.png"
       v-on:click="newServiceTemplate()"
       style="width: 32px; height: 32px"
     />
     <img
-      src="asset/img/actions/save.png"
+      src="./img/actions/save.png"
       v-on:click="saveServiceTemplate()"
       style="width: 32px; height: 32px"
     />
     <img
-      src="asset/img/actions/delete.png"
+      src="./img/actions/delete.png"
       v-on:click="deleteServiceTemplate()"
       style="width: 32px; height: 32px"
     />
@@ -199,22 +199,22 @@
         <q-tr :props="props">
           <q-td auto-width>
             <img
-              src="asset/img/actions/open.png"
+              src="./img/actions/open.png"
               style="width: 32px; height: 32px; fill: greenyellow"
               v-on:click="selectServiceTemplate(props.row)"
             />
             <img
-              src="asset/img/actions/unlocked.png"
+              src="./img/actions/unlocked.png"
               style="width: 32px; height: 32px; xfill: green"
               v-on:click="activateServiceTemplate(props.row)"
             />
             <img
-              src="asset/img/actions/locked.png"
+              src="./img/actions/locked.png"
               style="width: 32px; height: 32px; xfill: red"
               v-on:click="suspendServiceTemplate(props.row)"
             />
             <img
-              src="asset/img/actions/delete.png"
+              src="./img/actions/delete.png"
               style="width: 32px; height: 32px; xfill: gray"
               v-on:click="deleteServiceTemplate(props.row)"
             />

@@ -32,24 +32,24 @@
         <q-tr :props="props" v-bind:class="props.row.state">
           <q-td auto-width>
             <img
-              src="asset/img/actions/open.png"
+              src="./img/actions/open.png"
               v-on:click="openDevice(props.row)"
               style="width: 32px; height: 32px;"
             />
             <img
-              src="asset/img/actions/delete.png"
+              src="./img/actions/delete.png"
               v-on:click="deleteDevice(props.row)"
               style="width: 32px; height: 32px; xfill: gray;"
             />
             <img
-              src="asset/img/actions/eye.svg"
+              src="./img/actions/eye.svg"
               style="width: 32px; height: 32px;"
               v-on:click="monitorDevice(props.row)"
             />
             <template v-if="(props.row.siteBackboneId===null) && selectedSiteBackbone && selectedSiteBackbone.id">
               <h6>Non associato ad alcun sito</h6>
               <img
-                src="asset/img/actions/plugDevice.png"
+                src="./img/actions/plugDevice.png"
                 style="width: 32px; height: 32px;"
                 v-on:click="plugDeviceinSite(props.row)"
               />
@@ -57,7 +57,7 @@
             <template v-if="props.row.siteBackboneId!==null">
               <h6>Associato al sito: <strong>{{sitesBackbone[props.row.siteBackboneId].description}}</strong></h6>
               <img
-                src="asset/img/actions/unplugDevice.png"
+                src="./img/actions/unplugDevice.png"
                 style="width: 32px; height: 32px;"
                 v-on:click="unplugDeviceinSite(props.row)"
               />
@@ -68,16 +68,16 @@
       </template>
     </q-table>
 
-    <img src="asset/img/actions/new.png" @click="newDevice" style="width: 48px; height: 48px;" />
-    <img src="asset/img/actions/save.png" @click="saveDevice" style="width: 48px; height: 48px;" />
-    <img src="asset/img/actions/delete.png" @click="deleteDevice" style="width: 48px; height: 48px;" />
+    <img src="./img/actions/new.png" @click="newDevice" style="width: 48px; height: 48px;" />
+    <img src="./img/actions/save.png" @click="saveDevice" style="width: 48px; height: 48px;" />
+    <img src="./img/actions/delete.png" @click="deleteDevice" style="width: 48px; height: 48px;" />
     <img
-      src="asset/img/actions/eye.svg"
+      src="./img/actions/eye.svg"
       @click="monitorDevice"
       style="width: 48px; height: 48px;"
       v-bind:class="monitorClassBackground"
     />
-    <img src="asset/img/actions/exit.png" @click="exit" style="width: 48px; height: 48px;" />
+    <img src="./img/actions/exit.png" @click="exit" style="width: 48px; height: 48px;" />
 
     <ValidationObserver ref="FormDeviceBackbone">
     <q-form ref="deviceBackboneForm" class="q-gutter-md">

@@ -2,22 +2,22 @@
   <div id="service">
     <h5>Sezione personalizzazione servizio</h5>
     <img
-      src="asset/img/actions/new.png"
+      src="./img/actions/new.png"
       @click="newService"
       style="width: 48px; height: 48px;"
     />
     <img
-      src="asset/img/actions/save.png"
+      src="./img/actions/save.png"
       @click="saveService"
       style="width: 48px; height: 48px;"
     />
     <img
-      src="asset/img/actions/delete.png"
+      src="./img/actions/delete.png"
       @click="deleteService"
       style="width: 48px; height: 48px;"
     />
     <img
-      src="asset/img/actions/exit.png"
+      src="./img/actions/exit.png"
       @click="exit"
       style="width: 48px; height: 48px;"
     />
