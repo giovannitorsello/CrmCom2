@@ -41,23 +41,22 @@ if (config.olo2oloServer.enable) {
   };
 
   const olo2oloApp = express();
+
+  module.exports = {
+    mainApp: {},
+    database: {},
+    olo2oloServer: {},
+    setup(app, database) {
+      this.mainApp = app;
+      this.database = database;
+      https
+        .createServer(options, olo2oloApp)
+        .listen(config.olo2oloServer.https_port);
+
+      routes_olo_area.load_routes(olo2oloApp, database);
+    },
+  };
 }
-
-module.exports = {
-  mainApp: {},
-  database: {},
-  olo2oloServer: {},
-  setup(app, database) {
-    this.mainApp = app;
-    this.database = database;
-    https
-      .createServer(options, olo2oloApp)
-      .listen(config.olo2oloServer.https_port);
-
-    routes_olo_area.load_routes(olo2oloApp, database);
-  },
-};
-
 //soap.listen(app, '/donatingMigrationService', this.donatingService, xmlDonatinMigrationService);
 //soap.listen(app, '/recipientMigrationService', this.recipientService, xmlDonatinMigrationService);
 
