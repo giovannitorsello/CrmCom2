@@ -36,11 +36,7 @@ module.exports = {
         // Entry point is set below in HtmlWebPackPlugin in Plugins 
         test: /\.html$/,
         use: [{ loader: "html-loader" }]
-      },
-      {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: '/',
-      },
+      }
     ]
   },
   plugins: [
