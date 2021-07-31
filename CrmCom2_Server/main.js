@@ -81,7 +81,8 @@ database.setup(app, function () {
   routes_cust_area.load_routes(app, database);
   routes_utilities.load_routes(app, database);
   
-  olo2olo.setup(app,database);
+  if (config.olo2oloServer.enable)
+    olo2olo.setup(app,database);
   
 
   //Discover passwords
