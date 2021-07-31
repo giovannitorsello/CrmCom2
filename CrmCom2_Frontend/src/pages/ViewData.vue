@@ -46,12 +46,12 @@
         <q-tr :props="props" v-bind:class="props.row.state">
           <q-td auto-width>
             <img
-              src="/img/actions/open.png"
+              src="asset/img/actions/open.png"
               style="width: 32px; height: 32px;"
               v-on:click="openObject(props.row)"
             />
             <img
-              src="/img/actions/link.png"
+              src="asset/img/actions/link.png"
               style="width: 32px; height: 32px;"
               v-on:click="connectObject(props.row)"
             />

@@ -6,24 +6,24 @@
     </h6>    
     <ValidationObserver v-slot="observer" ref="obs">
       <img
-      src="/img/actions/new.png"
+      src="asset/img/actions/new.png"
       @click="newCustomer"
       style="width: 48px; height: 48px;"
       :disabled="observer.invalid"
     />
     <img
-      src="/img/actions/save.png"
+      src="asset/img/actions/save.png"
       @click="saveCustomer"
       style="width: 48px; height: 48px;"
       :disabled="observer.invalid"
     />
     <img
-      src="/img/actions/delete.png"
+      src="asset/img/actions/delete.png"
       @click="deleteCustomer"
       style="width: 48px; height: 48px;"
     />
     <img
-      src="/img/actions/exit.png"
+      src="asset/img/actions/exit.png"
       @click="exit"
       style="width: 48px; height: 48px;"
     />
@@ -359,22 +359,22 @@
           <q-tr :props="props" v-bind:class="props.row.state">
             <q-td auto-width>
               <img
-                src="/img/actions/open.png"
+                src="asset/img/actions/open.png"
                 style="width: 32px; height: 32px;"
                 v-on:click="openContract(props.row)"
               />
               <img
-                src="/img/actions/unlocked.png"
+                src="asset/img/actions/unlocked.png"
                 style="width: 32px; height: 32px; xfill:green;"
                 v-on:click="activateContract(props.row)"
               />
               <img
-                src="/img/actions/locked.png"
+                src="asset/img/actions/locked.png"
                 style="width: 32px; height: 32px; xfill:red;"
                 v-on:click="suspendContract(props.row)"
               />
               <img
-                src="/img/actions/delete.png"
+                src="asset/img/actions/delete.png"
                 style="width: 32px; height: 32px; xfill: gray;"
                 v-on:click="deleteContract(props.row)"
               />
