@@ -12,7 +12,6 @@ config.json
 backup/*
 data_csv/*
 *.pem
-*.json
 *.jpg
 *.png
 *.pdf

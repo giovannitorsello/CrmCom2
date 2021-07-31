@@ -1,0 +1,58 @@
+[
+    {
+        "id": 1,
+        "description": "Cliente",
+        "type": "customer",
+        "searchFields": ["firstname", "lastname", "codfis", "company", "vatcode", "email", "phone", "pec"],                
+        "findByFieldUrl": "/adminarea/find_obj_by_field",
+        "UiComponent": "Customer"
+    },
+    {
+        "id": 2,
+        "type": "contract",   
+        "description": "Contratto",
+        "searchFields": ["description"],
+        "findByFieldUrl": "/adminarea/find_obj_by_field",
+        "UiComponent": "Contract"
+    },
+    {
+        "id": 3,
+        "description": "Servizio",
+        "type": "contractService",
+        "searchFields": ["description"],
+        "findByFieldUrl": "/adminarea/find_obj_by_field",
+        "UiComponent": "ServiceContract"
+    },
+    {
+        "id": 4,
+        "description": "Modello di servizio",
+        "type": "serviceTemplate",
+        "searchFields": ["description"],
+        "findByFieldUrl": "/adminarea/find_obj_by_field",
+        "UiComponent": "ServiceTemplate"        
+    },
+    {
+        "id": 5,
+        "type": "deviceCustomer",
+        "description": "Dispositivo cliente",
+        "searchFields": ["description", "ipv4", "ipv6", "mac"],
+        "findByFieldUrl": "/adminarea/find_obj_by_field",
+        "UiComponent": "DeviceCustomer"       
+    },
+    {
+        "id": 6,
+        "type": "deviceBackbone",
+        "description": "Dispositivo di backbone",
+        "searchFields": ["description", "ipv4", "ipv6", "mac"],
+        "findByFieldUrl": "/adminarea/find_obj_by_field",
+        "UiComponent": "DeviceBackbone"
+    },
+    {
+        "id": 7,
+        "type": "siteBackbone",
+        "description": "Siti backbone",
+        "searchFields": ["description"],
+        "findByFieldUrl": "/adminarea/find_obj_by_field",
+        "UiComponent": "SiteBackbone"
+    }
+]

@@ -1,0 +1,85 @@
+{
+  "name": "crmcom2",
+  "version": "1.0.0",
+  "author": "Giovanni Torsello <giovanni.torsello@gmail.com>",
+  "keywords": [
+    "util",
+    "functional",
+    "server",
+    "client",
+    "browser"
+  ],
+  "contributors": [],
+  "dependencies": {
+    "axios": "^0.21.1",
+    "base64-to-uint8array": "^1.0.0",
+    "body-parser": "^1.19.0",
+    "brotli": "^1.3.2",
+    "cors": "^2.8.5",
+    "cron-file-cleaner": "^1.1.0",
+    "csv-parser": "^2.3.3",
+    "dateformat": "^4.5.1",
+    "encode": "^1.0.1",
+    "event-stream": "^4.0.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "form-data": "^3.0.0",
+    "formidable": "^1.2.2",
+    "fs": "0.0.1-security",
+    "hs": "^2.0.1",
+    "http": "0.0.1-security",
+    "https": "^1.0.0",
+    "jimp": "^0.16.1",
+    "linebreak": "^1.0.2",
+    "loadash": "^1.0.0",
+    "lodash": "^4.17.20",
+    "mariadb": "^2.5.1",
+    "moment": "^2.29.1",
+    "multer": "^1.4.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
+    "nano": "^8.2.2",
+    "net-snmp": "^2.7.4",
+    "node-ssh": "^11.1.1",
+    "node-wsdl": "^1.0.1",
+    "nodemailer": "^6.4.14",
+    "path": "^0.12.7",
+    "pdf-lib": "^1.16.0",
+    "ping": "^0.2.3",
+    "proj4": "^2.6.2",
+    "rand-token": "^1.0.1",
+    "sequelize": "^6.3.5",
+    "sequelize-cli": "^6.2.0",
+    "sequelize-pool": "^6.1.0",
+    "xml-js": "^1.6.11",
+    "xsd-schema-validator": "^0.6.0"
+  },
+  "devDependencies": {},
+  "main": "main.js",
+  "scripts": {
+    "start-dev": "node .",
+    "debug": "nodemon --i nspect ./",
+    "build-dev": "pkg -t latest-linux-x64 -o ./bin/CrmCom2Server  package.json ",
+    "build-prod": "pkg -t latest-linux-x64 -o ./bin/CrmCom2Server package.json "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giovannitorsello/crmcom2.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/giovannitorsello/crmcom2/issues"
+  },
+  "homepage": "https://github.com/giovannitorsello/crmcom2#readme",
+  "description": "",
+  "postcss": {},
+  "bin": {
+    "CrmCom2Server": "./main.js"
+  },
+  "pkg": {
+    "scripts": [],
+    "assets": [
+      "node_modules/linebreak/src/classes.trie"
+    ]
+  }
+}

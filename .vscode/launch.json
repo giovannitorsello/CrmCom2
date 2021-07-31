@@ -1,0 +1,30 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [        
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "CrmCom2_Server",
+      "runtimeExecutable": "nodemon",
+      "program": "${workspaceFolder}/CrmCom2_Server/main.js",
+      "cwd": "${workspaceFolder}/CrmCom2_Server/",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "CrmCom2_FirewallCommander",
+      "runtimeExecutable": "nodemon",
+      "program": "${workspaceFolder}/CrmCom2_FirewallCommander/main.js",
+      "cwd": "${workspaceFolder}/CrmCom2_FirewallCommander/",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}

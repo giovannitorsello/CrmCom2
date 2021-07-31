@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "vue-web-cam": "^1.9.0"
+  }
+}

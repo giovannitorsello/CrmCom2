@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "company": "WIFINETCOM SRL",
+        "techasset": "WIFI",
+        "propDeviceStructure": {
+            "firmware_version": "",            
+            "wifi": {
+            "ssid": "",
+            "password": "",
+            "security-type": ""
+            },
+            "bandwith" : {
+                "download_min": "",
+                "download_max": "",
+                "upload_min": "",
+                "upload_max": ""
+            }
+
+        } 
+    },
+    {
+        "id": 2,
+        "company": "TIM EASY IP",
+        "techasset": "FTTC",
+        "propDeviceStructure": {
+            "firmware_version": "",            
+            "ppoe": {
+            "username": "",
+            "password": "",
+            "network": "",
+            "ip": ""
+            }
+        } 
+    },
+    {
+        "id": 3,
+        "company": "TIM EASY ADSL",
+        "techasset": "FTTC",
+        "propDeviceStructure": {
+            "firmware_version": "",            
+            "ppoe": {
+            "username": "",
+            "password": "",
+            "network": "",
+            "ip": ""
+            }
+        } 
+    }
+]
