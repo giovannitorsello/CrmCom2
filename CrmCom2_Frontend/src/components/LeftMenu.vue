@@ -104,7 +104,7 @@ export default {
           type: "generic"
         }
       ];
-    }
+    }    
     if (this.user.role === "manager") {
       this.pagesAllowed = [
         { id: 1, name: "Ricerche", route: "/ViewData", type: "general" },
@@ -119,23 +119,29 @@ export default {
           name: "Siti Backbone",
           route: "/SiteBackbone",
           type: "backbone"
-        },
+        },        
         {
           id: 4,
-          name: "Monitor Dispositivi Cliente",
-          route: "/MonitorDevicesCustomer",
-          type: "monitor"
+          name: "Registrazione cliente",
+          route: "/WizardCustomerRegistration",
+          type: "generic"
         },
         {
           id: 5,
-          name: "Monitor Dispositivi Backbone",
-          route: "/MonitorDevicesBackbone",
-          type: "monitor"
+          name: "Clienti",
+          route: "/Customer",
+          type: "generic"
         },
         {
           id: 6,
-          name: "Registrazione cliente",
-          route: "/WizardCustomerRegistration",
+          name: "Contratti",
+          route: "/Contract",
+          type: "generic"
+        },
+        {
+          id: 7,
+          name: "Dispositivi",
+          route: "/DeviceCustomer",
           type: "generic"
         }
       ];
