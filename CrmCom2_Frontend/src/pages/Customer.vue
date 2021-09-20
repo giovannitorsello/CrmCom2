@@ -295,7 +295,7 @@
                 <ValidationProvider
                   name="Nome utente"
                   immediate
-                  rules="required|email"
+                  rules="required"
                   v-slot="{ errors }"
                 >
                   <q-input
