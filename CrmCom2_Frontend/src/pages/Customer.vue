@@ -519,8 +519,7 @@ export default {
         this.selectedContract={}
         this.$store.commit("changeCustomer",this.selectedCustomer);
       },
-      async saveCustomer() {
-        console.log("click");  
+      async saveCustomer() {        
         this.$axios.post('/adminarea/customer/update', {customer: this.selectedCustomer})
           .then(response => {
                 if (response.data.status === "OK") {
