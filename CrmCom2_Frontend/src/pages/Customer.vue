@@ -3,31 +3,30 @@
     <h6>
       Gestione del cliente
       <strong>{{ customerDescription }}</strong>
-    </h6>    
+    </h6>
     <ValidationObserver v-slot="observer" ref="obs">
       <img
-      src="./img/actions/new.png"
-      @click="newCustomer"
-      style="width: 48px; height: 48px;"
-      :disabled="observer.invalid"
-    />
-    <img
-      src="./img/actions/save.png"
-      @click="saveCustomer"
-      style="width: 48px; height: 48px;"
-      :disabled="observer.invalid"
-    />
-    <img
-      src="./img/actions/delete.png"
-      @click="deleteCustomer"
-      style="width: 48px; height: 48px;"
-    />
-    <img
-      src="./img/actions/exit.png"
-      @click="exit"
-      style="width: 48px; height: 48px;"
-    />
-
+        src="./img/actions/new.png"
+        @click="newCustomer"
+        style="width: 48px; height: 48px;"
+        :disabled="observer.invalid"
+      />
+      <img
+        src="./img/actions/save.png"
+        @click="saveCustomer"
+        style="width: 48px; height: 48px;"
+        :disabled="observer.invalid"
+      />
+      <img
+        src="./img/actions/delete.png"
+        @click="deleteCustomer"
+        style="width: 48px; height: 48px;"
+      />
+      <img
+        src="./img/actions/exit.png"
+        @click="exit"
+        style="width: 48px; height: 48px;"
+      />
 
       <q-form ref="customerForm" class="q-gutter-md">
         <div class="row">
@@ -428,7 +427,7 @@ export default {
           this.$store.commit("changeContract", ctr);
           this.$router.push("/Contract")
       },
-      activateContract: function(ctr) {        
+      activateContract: function(ctr) {
         ctr.state="active";
         this.$axios.post('/adminarea/contract/update', {contract: ctr})
           .then(response => {
@@ -454,7 +453,7 @@ export default {
                 console.log(error);
             });
       },
-      deleteContract: function(ctr) {        
+      deleteContract: function(ctr) {
         const isConfirmed = confirm("Confermi la cancellazione?");
         if(isConfirmed) {
           this.$axios.post('/adminarea/contract/delete', {contract: ctr})
@@ -475,8 +474,8 @@ export default {
         if(this.$store.state.customer) {
           this.selectedCustomer=Object.assign({}, this.$store.state.customer);
           if(!this.selectedCustomer.vatcode || this.selectedCustomer.vatcode==="") this.isCompany = false;
-          else {this.isCompany = true; this.tab="company";}          
-          this.isBusinness=this.selectedCustomer.businessflag;          
+          else {this.isCompany = true; this.tab="company";}
+          this.isBusinness=this.selectedCustomer.businessflag;
           this.getCustomerContracts();
         }
       },
@@ -512,7 +511,7 @@ export default {
         }
         else if (this.isBusinness === true) {
             this.selectedCustomer.businessflag=true;
-        }        
+        }
       },
       newCustomer: function() {
         this.selectedCustomer={};
@@ -520,28 +519,29 @@ export default {
         this.selectedContract={}
         this.$store.commit("changeCustomer",this.selectedCustomer);
       },
-      async saveCustomer() {        
+      async saveCustomer() {
+        if(this.isCompany===false) {
+          console.log("Set company field empty. User is not a company");
+          this.selectedCustomer.vatcode="";
+          this.selectedCustomer.sdicode="";
+          this.selectedCustomer.company="";
+          this.selectedCustomer.companyphone="";
+          this.selectedCustomer.companyaddress="";
+          this.selectedCustomer.companypec="";
+        }
+
         this.$axios.post('/adminarea/customer/update', {customer: this.selectedCustomer})
           .then(response => {
                 if (response.data.status === "OK") {
-                    if(this.isCompany===false) {
-                      console.log("Set company field empty. User is not a company");
-                      this.selectedCustomer.vatcode="";
-                      this.selectedCustomer.sdicode="";
-                      this.selectedCustomer.company="";
-                      this.selectedCustomer.companyphone="";
-                      this.selectedCustomer.companyaddress="";
-                      this.selectedCustomer.companypec="";
-                    }
                     this.selectedCustomer = response.data.customer;
                     this.$store.commit("changeCustomer", this.selectedCustomer);
                     this.makeToast(response.data.msg);
-                    this.getCustomerData();                    
+                    this.getCustomerData();
                 }
             })
             .catch(error => {
                 console.log(error);
-            });        
+            });
       },
       deleteCustomer: function() {
         const isConfirmed = confirm("Confermi la cancellazione?");
