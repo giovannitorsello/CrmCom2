@@ -504,6 +504,7 @@ export default {
               this.isCompanyBtn.value = false;
               this.isCompanyBtn.caption = "<span><i class='fa fa-home'></i> Privato</span>";
           }
+          this.isCompany=this.isCompanyBtn.value;
       },
       changeBusinness: function() {
         if (this.isBusinness === false) {
@@ -523,6 +524,15 @@ export default {
         this.$axios.post('/adminarea/customer/update', {customer: this.selectedCustomer})
           .then(response => {
                 if (response.data.status === "OK") {
+                    if(this.isCompany===false) {
+                      console.log("Set company field empty. User is not a company");
+                      this.selectedCustomer.vatcode="";
+                      this.selectedCustomer.sdicode="";
+                      this.selectedCustomer.company="";
+                      this.selectedCustomer.companyphone="";
+                      this.selectedCustomer.companyaddress="";
+                      this.selectedCustomer.companypec="";
+                    }
                     this.selectedCustomer = response.data.customer;
                     this.$store.commit("changeCustomer", this.selectedCustomer);
                     this.makeToast(response.data.msg);
