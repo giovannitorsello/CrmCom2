@@ -732,6 +732,7 @@ export default {
                   this.$store.commit("changeContract", this.selectedContract);
                   this.makeToast(response.data.msg);
                   this.getContractData();
+                  this.makeToast("New contract.");
                 }
             })
             .catch(error => {
@@ -753,9 +754,11 @@ export default {
                     this.$store.commit("changeContract", this.selectedContract);
                     this.makeToast(response.data.msg);
                     this.getContractData();
+                    this.makeToast("Contract saved successfully.");
                 }
             })
             .catch(error => {
+                this.makeToast("Error on save contract.");
                 console.log(error);
             });
         }
@@ -773,9 +776,11 @@ export default {
                     this.$store.commit("changeContract", this.selectedContract);
                     this.makeToast(response.data.msg);
                     this.getContractData();
+                    this.makeToast("Delete contract");
                 }
             })
             .catch(error => {
+                this.makeToast("Error on delete contract.");
                 console.log(error);
             });
         }
