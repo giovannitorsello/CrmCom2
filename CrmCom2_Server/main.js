@@ -65,9 +65,11 @@ const options = {
   cert: fs.readFileSync(process.cwd() +'/certs/apiserver/fullchain.pem')
 };
 
-//http.createServer(options, app).listen(config.server.http_port);
+console.log("Server is listening http on port: "+config.server.http_port);
+http.createServer(options, app).listen(config.server.http_port);
 //app.listen(config.server.http_port);
 
+console.log("Server is listening http on port: "+config.server.https_port);
 https.createServer(options, app).listen(config.server.https_port);
 
 
