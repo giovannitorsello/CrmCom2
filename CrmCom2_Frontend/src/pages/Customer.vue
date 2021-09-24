@@ -474,7 +474,7 @@ export default {
       getCustomerData: function () {
         if(this.$store.state.customer) {
           this.selectedCustomer=Object.assign({}, this.$store.state.customer);
-          if(this.selectedCustomer.vatcode==="") this.isCompany = false;
+          if(!this.selectedCustomer.vatcode || this.selectedCustomer.vatcode==="") this.isCompany = false;
           else {this.isCompany = true; this.tab="company";}          
           this.isBusinness=this.selectedCustomer.businessflag;          
           this.getCustomerContracts();
