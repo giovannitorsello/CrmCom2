@@ -754,7 +754,6 @@ export default {
                     this.$store.commit("changeContract", this.selectedContract);
                     this.makeToast(response.data.msg);
                     this.getContractData();
-                    this.makeToast("Contract saved successfully.");
                 }
             })
             .catch(error => {
@@ -776,7 +775,6 @@ export default {
                     this.$store.commit("changeContract", this.selectedContract);
                     this.makeToast(response.data.msg);
                     this.getContractData();
-                    this.makeToast("Delete contract");
                 }
             })
             .catch(error => {
