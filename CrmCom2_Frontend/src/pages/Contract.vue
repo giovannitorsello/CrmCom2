@@ -744,7 +744,8 @@ export default {
         }
       },
       async saveContract() {
-        console.log(this.selectedContract);
+        this.selectedContract.customerId=this.selectedCustomer.id;
+        console.log(this.selectedContract);        
         const valid = true;
         if(valid) {
         this.$axios.post('/adminarea/contract/update', {contract: this.selectedContract})

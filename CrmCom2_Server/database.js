@@ -334,13 +334,13 @@ module.exports = {
         Contract.hasMany(Invoice);
         Invoice.hasMany(InvoiceEntry);
         ContractService.hasMany(InvoiceEntry);
-        ServiceTemplate.hasMany(ContractService);
+        
 
         Contract.belongsTo(Customer);
         DeviceCustomer.belongsTo(Contract);
         DeviceCustomer.belongsTo(Customer);
         ContractService.belongsTo(Contract);
-        ContractService.belongsTo(ServiceTemplate);
+        
         Invoice.belongsTo(Contract);
         InvoiceEntry.belongsTo(Invoice);
         InvoiceEntry.belongsTo(ContractService);

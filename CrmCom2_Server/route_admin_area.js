@@ -1215,7 +1215,7 @@ module.exports = {
               .then(function (contract) {
                 if (contract !== null) {
                   var contrService = {};
-                  //contrService.contractId=idContract;
+
                   contrService.description = srvTempl.description;
                   contrService.unit = srvTempl.unit;
                   contrService.code = utility.makeUuid();
@@ -1231,16 +1231,15 @@ module.exports = {
                   contrService.lastbillingdate = srvTempl.lastbillingdate;
                   contrService.dayforexpirationwarning =
                     srvTempl.dayforexpirationwarning;
-
+                  
                   database.entities.contractService
                     .create(contrService)
                     .then(function (objnew) {
                       if (objnew !== null) {
-                        objnew.setContract(contract);
-                        objnew. setServiceTemplate(srvTempl);
+                        objnew.setContract(contract);                        
                         res.send({
                           status: "OK",
-                          msg: "Service addes successfully",
+                          msg: "Service added successfully",
                           service: objnew,
                         });
                         objnew.save();
@@ -1368,59 +1367,89 @@ module.exports = {
     });
 
     app.post("/adminarea/contract/insert", function (req, res) {
-      var obj = req.body.contract;
-      database.entities.contract
-        .findOne({
-          where: { description: obj.description, customerId: obj.customerId },
-        })
-        .then(function (item) {
-          if (item === null) {
-            obj.uid = utility.makeUuid();
-            database.entities.contract.create(obj).then(function (objnew) {
-              if (objnew !== null) {
-                res.send({
-                  status: "OK",
-                  msg: "Contract create successfully",
-                  contract: objnew,
-                });
-              }
-            });
-          } else {
-            res.send({
-              status: "error",
-              msg: "Contract creation error",
-              contract: obj,
-            });
-          }
+        var obj = req.body.contract;
+        database.entities.contract
+          .findOne({
+            where: { description: obj.description, customerId: obj.customerId },
+          })
+          .then(function (item) {
+            if (item === null) {
+              obj.uid = utility.makeUuid();
+              database.entities.contract.create(obj).then(function (objnew) {
+                if (objnew !== null) {
+                  res.send({
+                    status: "OK",
+                    msg: "Contract create successfully",
+                    contract: objnew,
+                  });
+                }
+              });
+            } else {
+              res.send({
+                status: "error",
+                msg: "Contract creation error",
+                contract: obj,
+              });
+            }
         });
     });
 
     app.post("/adminarea/contract/update", function (req, res) {
       var obj_updated = req.body.contract;
-      database.entities.contract
-        .findOne({ where: { id: obj_updated.id } })
-        .then(function (obj) {
-          obj.description = obj_updated.description;
-          obj.address = obj_updated.address;
-          obj.state = obj_updated.state;
-          obj.startdate = obj_updated.startdate;
-          obj.enddate = obj_updated.enddate;
-          obj.duration = obj_updated.duration;
-          obj.billingPeriod = obj_updated.billingPeriod;
-          obj.automaticrenew = obj_updated.automaticrenew;
-          obj.businessflag = obj_updated.businessflag;
-
-          database.saveContract(obj, function (objupdate) {
-            if (objupdate !== null) {
-              res.send({
-                status: "OK",
-                msg: "Contract update successfully",
-                contract: objupdate,
-              });
-            } else res.send({ status: "error", msg: "Contract update error", contract: obj_selected });
+      //New insert
+      if(!obj_updated.id) {
+            database.entities.contract
+            .findOne({
+              where: { description: obj_updated.description, customerId: obj_updated.customerId },
+            })
+            .then(function (item) {
+              if (item === null) {
+                obj_updated.uid = utility.makeUuid();
+                database.entities.contract.create(obj_updated).then(function (objnew) {
+                  if (objnew !== null) {
+                    res.send({
+                      status: "OK",
+                      msg: "Contract create successfully",
+                      contract: objnew,
+                    });
+                  }
+                });
+              } else {
+                res.send({
+                  status: "error",
+                  msg: "Contract creation error",
+                  contract: obj,
+                });
+              }
           });
-        });
+      }
+      else {
+        database.entities.contract
+          .findOne({ where: { id: obj_updated.id } })
+          .then(function (obj) {
+            obj.description = obj_updated.description;
+            obj.address = obj_updated.address;
+            obj.state = obj_updated.state;
+            obj.startdate = obj_updated.startdate;
+            obj.enddate = obj_updated.enddate;
+            obj.duration = obj_updated.duration;
+            obj.billingPeriod = obj_updated.billingPeriod;
+            obj.automaticrenew = obj_updated.automaticrenew;
+            obj.businessflag = obj_updated.businessflag;
+
+            database.saveContract(obj, function (objupdate) {
+              if (objupdate !== null) {
+                res.send({
+                  status: "OK",
+                  msg: "Contract update successfully",
+                  contract: objupdate,
+                });
+              } else res.send({ status: "error", msg: "Contract update error", contract: obj_selected });
+            });
+          });        
+      }
     });
+    
 
     app.post("/adminarea/contract/delete", function (req, res) {
       var objsel = req.body.contract;

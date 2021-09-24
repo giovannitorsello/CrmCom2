@@ -120,20 +120,21 @@ export default {
           console.log(this.customer);
           console.log(this.contract);
         }
-            const uiCompRoute="/"+this.objType.UiComponent; 
-            console.log("Got "+uiCompRoute);
-            console.log(obj);
-            this.$store.commit("change"+uiComp,obj);
-            this.$router.push(uiCompRoute);
+          const uiCompRoute="/"+this.objType.UiComponent; 
+          console.log("Got "+uiCompRoute);
+          console.log(obj);
+          this.$store.commit("change"+uiComp,obj);
+          this.$router.push(uiCompRoute);
         }
     },
     search() {        
         if(this.objType) {
-        const urlRestService=this.objType.findByFieldUrl;        
-        const searchObj={"type": this.objType.type, "fields": this.objType.searchFields, "value": this.txtSearch};
-        this.$axios.post(urlRestService, {"searchObj": searchObj})
-        .then(response => {                
+          const urlRestService=this.objType.findByFieldUrl;        
+          const searchObj={"type": this.objType.type, "fields": this.objType.searchFields, "value": this.txtSearch};
+          this.$axios.post(urlRestService, {"searchObj": searchObj})
+          .then(response => {                
                 if (response.data.status === "OK") {
+                    this.objectsFound=[];
                     response.data.results.forEach(element =>{
                       this.objectsFound.push(element);  
                     });
