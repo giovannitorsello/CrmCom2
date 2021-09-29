@@ -251,6 +251,7 @@
                 >
                   <q-input
                     label="Email"
+                    :change="changeEmail()"
                     v-model="selectedCustomer.email"
                     type="email"
                   />
@@ -335,7 +336,8 @@
 
     <q-separator vertical inset />
 
-    <div v-if="contracts">
+    <q-btn @click="addContract">Aggiungi contratto</q-btn>
+    <div v-if="contracts">     
       <q-table
         title="Contratti"
         :data="contracts"
@@ -423,6 +425,10 @@ export default {
     }
   },
   methods: {
+      addContract: function () {
+        this.$store.commit("changeCustomer", this.selectedCustomer);
+        this.$router.push("/Contract");
+      },
       openContract: function (ctr) {
           this.$store.commit("changeContract", ctr);
           this.$router.push("/Contract")
@@ -512,6 +518,16 @@ export default {
         else if (this.isBusinness === true) {
             this.selectedCustomer.businessflag=true;
         }
+      },
+      changeEmail: function() {
+        this.selectedCustomer.username=this.selectedCustomer.email;
+        this.selectedCustomer.password=this.randomPassword(8);
+      },
+      randomPassword: function(len) {
+        var pwdChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@!#[]{}£$%&^?=().,;:";
+        var pwdLen = len;
+        var randPassword = Array(pwdLen).fill(pwdChars).map(function(x) { return x[Math.floor(Math.random() * x.length)] }).join('');
+        return randPassword;
       },
       newCustomer: function() {
         this.selectedCustomer={};

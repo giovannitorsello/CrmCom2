@@ -58,13 +58,14 @@
                   <span class="error">{{ errors[0] }}</span>
                 </ValidationProvider>
                 <ValidationProvider
-                  name="Indirizzo"
+                  name="Indirizzo"                  
                   immediate
                   rules="required|address"
                   v-slot="{ errors }"
                 >
                   <q-input
                     label="Indirizzo"
+                    :change="changeAddress()"
                     v-model="selectedContract.address"
                   />
                   <span class="error">{{ errors[0] }}</span>
@@ -501,6 +502,26 @@ export default {
         this.$store.commit("changeContract", this.selectedContract);
         this.$router.push("/DeviceCustomer");
       },
+      initContractData() {
+        this.services=[];
+        this.devices=[];
+        this.selectedContract.description="Internet Home";
+        this.selectedContract.duration=365;
+        this.selectedContract.automaticrenew=true;
+        this.selectedContract.businessflag=true;
+        this.selectedContract.address=this.selectedCustomer.address;
+        this.selectedContract.invoiceAddress=this.selectedCustomer.address;
+        this.selectedContract.invoiceCity=this.selectedCustomer.city;
+        this.selectedContract.invoiceCAP=this.selectedCustomer.postalcode;
+        this.selectedContract.invoiceProvince="LE";
+        if(this.selectedCustomer.vatcode) {
+          this.selectedContract.description="Internet Businness";
+          this.selectedContract.address=this.selectedCustomer.companyaddress;
+          this.selectedContract.invoiceAddress=this.selectedCustomer.companyaddress;
+          this.selectedContract.invoiceCity=this.selectedCustomer.city;
+          this.selectedContract.invoiceCAP=this.selectedCustomer.postalcode;          
+        }
+      },
       getContractData() {
         const store=this.$store;
         this.selectedContract=Object.assign({}, this.$store.state.contract);
@@ -509,6 +530,11 @@ export default {
         this.getServiceTemplates();
         this.getContractServices();
         this.getContractDevices();
+
+        if(!this.selectedContract.id) {
+          //Copy customer Address in Contract Data
+          this.initContractData();
+        }
       },
       printContract: function() {
         this.$store.commit("changeCustomer", this.selectedCustomer);
@@ -598,6 +624,7 @@ export default {
             });
       },
       addService() {
+        if(!this.selectedContract.id) this.makeToastError("Salva il contratto prima di aggiungere i servizi.");
         var idServ=this.selectedServiceTemplate.id;
         if(idServ && this.selectedContract.id)
         this.$axios.post('/adminarea/contractService/insert', {idServiceTemplate: idServ, idContract: this.selectedContract.id})
@@ -717,54 +744,54 @@ export default {
         const isConfirmed = confirm("Confermi la cancellazione?");
         if(isConfirmed) {console.log("Delete confirmed"); return "cancellato";}
         return "";
-      },
-      async newContract() {
-        this.services={};
-        this.devices={};
-        const valid = true;
-        if(valid) {
-        this.selectedContract.customerId=this.customer.id;
-        this.$axios.post('/adminarea/contract/insert', {contract: this.selectedContract})
-          .then(response => {
-                if (response.data.status === "OK") {
-                  alert("Contratto inserito correttamente");
-                  this.selectedContract = response.data.contract;
-                  this.$store.commit("changeContract", this.selectedContract);
-                  this.makeToast(response.data.msg);
-                  this.getContractData();
-                  this.makeToast("New contract.");
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        }
-        else {
-          alert("Dati errati controlla i campi inseriti");
-        }
+      },      
+      async newContract() {        
+        this.initContractData();
+        this.selectedContract.id=null;
+        this.makeToast("Nuovo contratto, compila, salva ed aggiungi i servizi.");      
       },
       async saveContract() {
-        this.selectedContract.customerId=this.selectedCustomer.id;
-        console.log(this.selectedContract);        
-        const valid = true;
-        if(valid) {
-        this.$axios.post('/adminarea/contract/update', {contract: this.selectedContract})
-          .then(response => {
-                if (response.data.status === "OK") {
+        console.log(this.selectedContract.id)
+        if(!this.selectedContract.id || this.selectedContract.id===null) {
+          this.selectedContract.customerId=this.selectedCustomer.id;
+          this.$axios.post('/adminarea/contract/insert', {contract: this.selectedContract})
+            .then(response => {
+                  if (response.data.status === "OK") {                    
                     this.selectedContract = response.data.contract;
                     this.$store.commit("changeContract", this.selectedContract);
                     this.makeToast(response.data.msg);
                     this.getContractData();
-                }
+                    this.makeToast("New contract.");
+                  }
+                  else {
+                    this.makeToastError(response.data.msg);
+                  }
+
             })
             .catch(error => {
-                this.makeToast("Error on save contract.");
                 console.log(error);
+                this.makeToast("Error in contract insert.");
             });
         }
-        else {
-          alert("Dati errati controlla i campi inseriti");
-        }
+        
+        //Update contract
+        
+        else if(this.selectedContract.id){
+          this.selectedContract.customerId=this.selectedCustomer.id;                 
+          this.$axios.post('/adminarea/contract/update', {contract: this.selectedContract})
+            .then(response => {
+                  if (response.data.status === "OK") {
+                      this.selectedContract = response.data.contract;
+                      this.$store.commit("changeContract", this.selectedContract);
+                      this.makeToast(response.data.msg);
+                      this.getContractData();
+                  }
+              })
+              .catch(error => {
+                  this.makeToast("Error on save contract.");
+                  console.log(error);
+              });
+        }        
       },
       deleteContract: function() {
         const isConfirmed = confirm("Confermi la cancellazione?");
@@ -863,6 +890,12 @@ export default {
       },
       makeToast(string) {
         this.$q.notify({color: 'green-4', textColor: 'white', icon: 'info', message: string});
+      },
+      makeToastError(string) {
+        this.$q.notify({color: 'red-4', textColor: 'white', icon: 'error', message: string});
+      },
+      changeAddress() {
+        this.selectedContract.invoiceAddress=this.selectedContract.address;
       }
   },
   computed: mapState({
