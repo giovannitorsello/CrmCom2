@@ -67,7 +67,7 @@
                 <ValidationProvider
                   name="Nome"
                   immediate
-                  rules="required|alpha_spaces"
+                  rules="required|alpha_spaces_apostrophe"
                   v-slot="{ errors }"
                 >
                   <q-input label="Nome" v-model="selectedCustomer.firstname" />
