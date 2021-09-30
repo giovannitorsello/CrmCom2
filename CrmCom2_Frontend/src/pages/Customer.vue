@@ -77,7 +77,7 @@
                 <ValidationProvider
                   name="Cognome"
                   immediate
-                  rules="required|alpha_spaces"
+                  rules="required|alpha_spaces_apostrophe"
                   v-slot="{ errors }"
                 >
                   <q-input

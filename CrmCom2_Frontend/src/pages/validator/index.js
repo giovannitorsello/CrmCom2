@@ -78,6 +78,11 @@ extend("alpha_spaces", str => {
   return /^[a-z][a-z\s]*$/i.test(str);
 });
 
+extend("alpha_spaces_apostrophe", str => {
+  if (str === "") return false;
+  return /^[a-z,.'-][a-z,.'-\s]*$/i.test(str);
+});
+
 extend("alpha", str => {
   if (str === "") return false;
   return /^[a-z]*$/i.test(str);
