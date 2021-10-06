@@ -60,6 +60,9 @@ const Store = new Vuex.Store({
     changeSiteBackbone(state, site) {
       state.siteBackbone = site;
     },
+    changeMaintenanceEvent(state, site) {
+      state.maintenanceEvent = site;
+    },
     changeOlo(state, olo) {
       state.olo = olo;
     }

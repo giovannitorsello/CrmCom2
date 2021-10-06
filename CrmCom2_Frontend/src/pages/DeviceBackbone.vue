@@ -2,6 +2,7 @@
   <div id="deviceBackbone">
     <h6>Gestione dispositivi backbone</h6>
     <h6>Sito selezionato {{selectedSiteBackbone.description}}</h6>
+    
     <q-table
       title="Siti"
       :data="devicesBackbone"
@@ -71,6 +72,8 @@
     <img src="./img/actions/new.png" @click="newDevice" style="width: 48px; height: 48px;" />
     <img src="./img/actions/save.png" @click="saveDevice" style="width: 48px; height: 48px;" />
     <img src="./img/actions/delete.png" @click="deleteDevice" style="width: 48px; height: 48px;" />
+    <img src="./img/actions/wrench.svg" @click="addEventMantainance" v-if="selectedDeviceBackbone" style="width: 48px; height: 48px;" />
+    
     <img
       src="./img/actions/eye.svg"
       @click="monitorDevice"
@@ -238,6 +241,10 @@ export default {
     if (this.selectedSiteBackbone == null) this.selectedSiteBackbone = {};
   },
   methods: {
+    addEventMantainance() {
+      this.$store.commit("changeDeviceBackbone", this.selectedDeviceBackbone);
+      this.$router.push("/EventManteinance");
+    },
     monitorDevice(dev) {
       if (dev) {
         if (dev.state !== "monitored") dev.state = "monitored";

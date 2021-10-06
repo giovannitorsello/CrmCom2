@@ -2071,6 +2071,131 @@ module.exports = {
         });
     });
 
+    ///////////////////// Event Manteinance ///////////////////////////
+    app.post("/adminarea/maintenanceEvent/get_by_id", function (req, res) {
+      var idDevice = req.body.idDevice;
+      database.entities.maintenanceEvent
+        .findOne({ where: { id: idDevice } })
+        .then(function (dev) {
+          if (dev) {
+            res.send({
+              status: "OK",
+              msg: "Maintenance event found",
+              maintenanceEvent: dev,
+            });
+          } else res.send({ status: "error", msg: "Maintenance event not found", eventManteinance: {} });
+        });
+    });
+
+    app.post("/adminarea/maintenanceEvent/getall", function (req, res) {
+      var deviceBackbone = req.body.deviceBackbone;
+      var id_device=deviceBackbone.id;
+      database.entities.maintenanceEvent.findAll({where: {deviceBackboneId:  id_device}}).then(function (results) {
+        if (results)
+          res.send({
+            status: "OK",
+            msg: "Maintenance event  found.",
+            maintenanceEvents: results,
+          });
+        else
+          res.send({
+            status: "OK",
+            msg: "Maintenance event not found.",
+            maintenanceEvents: {},
+          });
+      });
+    });
+
+    app.post("/adminarea/maintenanceEvent/insert", function (req, res) {
+      var obj = req.body.maintenanceEvent;
+      var id_device=obj.objData.device.id;
+      if(!obj || !id_device) {
+        res.send({
+          status: "error",
+          msg: "Maintenance event creation error, probably yet exists.",
+          maintenanceEvent: {},
+        });
+      }
+      obj.id = "";
+      database.entities.maintenanceEvent
+        .findOne({ where: { description: obj.description, deviceBackboneId:  id_device} })
+        .then(function (dev) {
+          if (dev === null) {
+            obj.deviceBackboneId=id_device;
+            database.entities.maintenanceEvent
+              .create(obj)
+              .then(function (objnew) {
+                if (objnew !== null) {
+                  res.send({
+                    status: "OK",
+                    msg: "Maintenance event created successfully.",
+                    maintenanceEvent: objnew,
+                  });
+                }
+              });
+          } else {
+            res.send({
+              status: "error",
+              msg: "Maintenance event creation error, probably yet exists.",
+              maintenanceEvent: obj,
+            });
+          }
+        });
+    });
+
+    app.post("/adminarea/maintenanceEvent/update", function (req, res) {
+      var obj_updated = req.body.maintenanceEvent;
+      database.entities.maintenanceEvent
+        .findOne({ where: { id: obj_updated.id } })
+        .then(function (obj) {          
+          obj.description = obj_updated.description;
+          obj.type = obj_updated.type;
+          obj.daysInterval = obj_updated.daysInterval;          
+          obj.state = obj_updated.state;
+          obj.begin = obj_updated.begin;
+          obj.note = obj_updated.note;
+          obj.deviceBackboneId = obj_updated.deviceBackboneId;
+          obj.objData = obj_updated.objData;
+          obj.save().then((objupdate) => {
+            if (objupdate !== null) {
+              res.send({
+                status: "OK",
+                msg: "Maintenance event update successfully.",
+                maintenanceEvent: objupdate,
+              });
+            } else {
+              res.send({
+                status: "error",
+                msg: "Maintenance event update error.",
+                maintenanceEvent: obj,
+              });
+            }
+          });
+        });
+    });
+
+    app.post("/adminarea/maintenanceEvent/delete", function (req, res) {
+      var objsel = req.body.maintenanceEvent;
+      database.entities.maintenanceEvent
+        .findOne({ where: { id: objsel.id } })
+        .then(function (obj) {
+          if (obj !== null) {
+            obj.destroy();
+            res.send({
+              status: "OK",
+              msg: "Maintenance event deleted successfully.",
+              maintenanceEvent: obj,
+            });
+          } else {
+            res.send({
+              status: "error",
+              msg: "Maintenance event delete error.",
+              maintenanceEvent: objsel,
+            });
+          }
+        });
+    });
+
     //////////////////////Login and Logout //////////////////////////////
     //Get login by post
     app.post("/adminarea/login", function (req, res) {

@@ -74,24 +74,60 @@
             </div>
             <div class="row">
               <div class="col">
+                <ValidationProvider name="Data inizio" immediate rules="required" v-slot="{ errors }">   
+                  <q-input filled v-model="selectedContract.startdate">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                          <q-date v-model="selectedContract.startdate" :locale="calendarLocale" mask="DD-MM-YYYY" @input="calculateDays">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                  <span class="error">{{ errors[0] }}</span>
+                </ValidationProvider>
+                <ValidationProvider name="Data fine" immediate rules="required" v-slot="{ errors }">   
+                  <q-input filled v-model="selectedContract.enddate">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                          <q-date v-model="selectedContract.enddate" :locale="calendarLocale" mask="DD-MM-YYYY" @input="calculateDays">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                  <span class="error">{{ errors[0] }}</span>
+                </ValidationProvider>                                
                 <ValidationProvider
                   name="Durata in giorni"
                   immediate
-                  rules="required|integer"
+                  rules="integer"
                   v-slot="{ errors }"
-                >
+                  >
                   <q-input
                     label="Durata in giorni"
                     v-model="selectedContract.duration"
                   />
                   <span class="error">{{ errors[0] }}</span>
-                </ValidationProvider>
+                </ValidationProvider>                                
+              </div>
+            </div>
+            <div class="row">  
+              <div class="col">                
                 <ValidationProvider
                   name="Rinnovo automatico"
                   immediate
                   rules="required"
                   v-slot="{ errors }"
-                >
+                  >
                   <q-checkbox
                     label="Rinnovo Automatico"
                     v-model="selectedContract.automaticrenew"
@@ -103,7 +139,7 @@
                   immediate
                   rules="required"
                   v-slot="{ errors }"
-                >
+                  >
                   <q-checkbox
                     label="Da fatturare"
                     v-model="selectedContract.businessflag"
@@ -264,7 +300,7 @@
           </div>
           
 
-          <!--Identity ficalcode/health card -->
+          <!--Identity fiscalcode/health card -->
           <div class="row">
             <div class="col">
               <ValidationProvider
@@ -494,13 +530,34 @@ export default {
                   {name: "ipv4",        label: "Ip",             field: row => {if(row.ipv6) return row.ipv6; else return row.ipv4;}, sortable: true},
                   {name: "mac",         label: "Mac",            field: row => row.mac}
                   ],
-    
+        //Date picker variables
+        calendarLocale: {
+          /* starting with Sunday */
+          days: 'Domenica_Linedì_Martedì_Mercoledì_Giovedì_Venerdì_Sabato'.split('_'),
+          daysShort: 'Dom_Lun_Mar_Mer_Gio_Ven_Sab'.split('_'),
+          months: 'Gennaio_Febbraio_Marzo_Aprile_Maggio_Giugno_Luglio_Agosto_Settembre_Ottobre_Novembre_Dicembre'.split('_'),
+          monthsShort: 'Gen_Feb_Mar_Apr_Mag_Giu_Lug_Ago_Set_Ott_Nov_Dic'.split('_'),
+          firstDayOfWeek: 1
+        }
     }
   },
   methods: {
       addDevice() {
         this.$store.commit("changeContract", this.selectedContract);
         this.$router.push("/DeviceCustomer");
+      },
+      setEndDate() {
+        var begin=new Date(this.selectedContract.startdate);
+        var delta=365*1000*60*60*24;
+        this.selectedContract.enddate=new Date(begin.getTime()+delta);
+        this.calculateDays();
+      },
+      calculateDays() {
+        var begin=new Date(this.selectedContract.startdate).getTime();
+        var end=new Date(this.selectedContract.enddate).getTime();
+        var duration=end-begin;
+        console.log(duration);        
+        this.selectedContract.duration=duration/86400000;
       },
       initContractData() {
         this.services=[];

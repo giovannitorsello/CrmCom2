@@ -20,6 +20,7 @@ class InternetServiceLevel extends Model { };
 class Config extends Model { };
 class DeviceBackbone extends Model { };
 class SiteBackbone extends Model { };
+class MaintenanceEvent extends Model { };
 class Olo2Olo extends Model { };
 
 
@@ -36,6 +37,7 @@ module.exports = {
         invoiceEntry: InvoiceEntry,
         deviceCustomer: DeviceCustomer,
         deviceBackbone: DeviceBackbone,
+        maintenanceEvent: MaintenanceEvent,
         siteBackbone: SiteBackbone,
         olo2olo: Olo2Olo,
         locality: Locality,
@@ -254,6 +256,20 @@ module.exports = {
             tableName: 'sitesBackbone'
         });
 
+        MaintenanceEvent.init({
+            description: { type: Sequelize.STRING, allowNull: false },
+            daysInterval: { type: Sequelize.STRING, allowNull: false },            
+            type: { type: Sequelize.STRING, allowNull: true, defaultValue: "critical" }, /*critical, mandatory, minor*/
+            state: { type: Sequelize.STRING, allowNull: true, defaultValue: "enabled" }, /* enabled, disabled */
+            note: { type: Sequelize.STRING, allowNull: true },
+            begin: { type: Sequelize.DATE, allowNull: false },
+            objData: { type: Sequelize.JSON, allowNull: true },
+        }, {
+            sequelize,
+            modelName: 'maintenanceEvent',
+            tableName: 'maintenanceEvent'
+        });
+
         Olo2Olo.init({
             company: { type: Sequelize.STRING, allowNull: false },
             cow: { type: Sequelize.STRING, allowNull: false },            
@@ -346,6 +362,7 @@ module.exports = {
         InvoiceEntry.belongsTo(ContractService);
 
         DeviceBackbone.belongsTo(SiteBackbone);
+        MaintenanceEvent.belongsTo(DeviceBackbone);
 
         //Table Creation and Sync        
         Customer.sync({ force: false });
@@ -355,6 +372,7 @@ module.exports = {
         DeviceCustomer.sync({ force: false });
         DeviceBackbone.sync({ force: false });
         SiteBackbone.sync({ force: false });
+        MaintenanceEvent.sync({ force: false });
         Invoice.sync({ force: false });
         InvoiceEntry.sync({ force: false });
         

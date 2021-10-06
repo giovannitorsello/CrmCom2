@@ -16,6 +16,7 @@ const allPages=[
   { path: '/DeviceCustomer', component: () => import('pages/DeviceCustomer.vue') },
   { path: '/DeviceBackbone', component: () => import('pages/DeviceBackbone.vue') },
   { path: '/SiteBackbone', component: () => import('pages/SiteBackbone.vue') },
+  { path: '/EventManteinance', component: () => import('pages/EventManteinance.vue') },
   { path: '/MonitorDevicesCustomer', component: () => import('pages/MonitorDeviceCustomer.vue') },
   { path: '/MonitorDevicesBackbone', component: () => import('pages/MonitorDeviceBackbone.vue') },
   { path: '/WizardCustomerRegistration', component: () => import('pages/WizardCustomerRegistration.vue') }
