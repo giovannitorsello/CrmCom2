@@ -75,11 +75,11 @@
             <div class="row">
               <div class="col">
                 <ValidationProvider name="Data inizio" immediate rules="required" v-slot="{ errors }">   
-                  <q-input filled v-model="selectedContract.startdate">
+                  <q-input filled v-model="selectedContract.startdate" mask="####-##-##">
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer">
                         <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                          <q-date v-model="selectedContract.startdate" :locale="calendarLocale" mask="DD-MM-YYYY" @input="calculateDays">
+                          <q-date v-model="selectedContract.startdate" :locale="calendarLocale" mask="YYYY-MM-DD" @input="calculateDays">
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="Close" color="primary" flat />
                             </div>
@@ -91,11 +91,11 @@
                   <span class="error">{{ errors[0] }}</span>
                 </ValidationProvider>
                 <ValidationProvider name="Data fine" immediate rules="required" v-slot="{ errors }">   
-                  <q-input filled v-model="selectedContract.enddate">
+                  <q-input filled v-model="selectedContract.enddate" mask="####-##-##">
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer">
                         <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                          <q-date v-model="selectedContract.enddate" :locale="calendarLocale" mask="DD-MM-YYYY" @input="calculateDays">
+                          <q-date v-model="selectedContract.enddate" :locale="calendarLocale" mask="YYYY-MM-DD" @input="calculateDays">
                             <div class="row items-center justify-end">
                               <q-btn v-close-popup label="Close" color="primary" flat />
                             </div>
@@ -115,6 +115,7 @@
                   <q-input
                     label="Durata in giorni"
                     v-model="selectedContract.duration"
+                    disable
                   />
                   <span class="error">{{ errors[0] }}</span>
                 </ValidationProvider>                                
@@ -545,18 +546,13 @@ export default {
       addDevice() {
         this.$store.commit("changeContract", this.selectedContract);
         this.$router.push("/DeviceCustomer");
-      },
-      setEndDate() {
-        var begin=new Date(this.selectedContract.startdate);
-        var delta=365*1000*60*60*24;
-        this.selectedContract.enddate=new Date(begin.getTime()+delta);
-        this.calculateDays();
-      },
-      calculateDays() {
-        var begin=new Date(this.selectedContract.startdate).getTime();
-        var end=new Date(this.selectedContract.enddate).getTime();
-        var duration=end-begin;
-        console.log(duration);        
+      },      
+      calculateDays() {        
+        var start = this.selectedContract.startdate.split("-");
+        var end = this.selectedContract.enddate.split("-");
+        var begin = new Date(start[0], start[1] - 1, start[2]);
+        var end = new Date(end[0], end[1] - 1, end[2]);
+        var duration=end.getTime()-begin.getTime();                
         this.selectedContract.duration=duration/86400000;
       },
       initContractData() {
@@ -577,7 +573,7 @@ export default {
           this.selectedContract.invoiceAddress=this.selectedCustomer.companyaddress;
           this.selectedContract.invoiceCity=this.selectedCustomer.city;
           this.selectedContract.invoiceCAP=this.selectedCustomer.postalcode;          
-        }
+        }        
       },
       getContractData() {
         const store=this.$store;
@@ -587,7 +583,12 @@ export default {
         this.getServiceTemplates();
         this.getContractServices();
         this.getContractDevices();
-
+        // Format date        
+        //this.selectedContract.startdate=new Date(this.selectedContract.startdate);
+        //this.selectedContract.enddate=new Date(this.selectedContract.enddate);
+        //this.selectedContract.startdate=this.selectedContract.startdate.getDay()+"-"+this.selectedContract.startdate.getMonth()+"-"+this.selectedContract.startdate.getYear();
+        //this.selectedContract.enddate=this.selectedContract.enddate.getDay()+"-"+this.selectedContract.enddate.getMonth()+"-"+this.selectedContract.enddate.getYear();
+        
         if(!this.selectedContract.id) {
           //Copy customer Address in Contract Data
           this.initContractData();
