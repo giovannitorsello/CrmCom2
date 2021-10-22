@@ -237,6 +237,13 @@ export default {
     ValidationObserver
   },
   methods: {
+    getFreeIps() {
+      console.log("Retrieve free ips");
+      this.$axios.post('/adminarea/deviceCustomer/getFreeIps')
+        .then((response) => {
+
+        });
+    },
     populateSelectAsset() {
       this.companyassets.forEach(element => {
         this.selectAssetOptions.push({label: element.company+" -- "+element.techasset, value: element});
@@ -363,6 +370,7 @@ export default {
     this.selectedContract=Object.assign({}, this.$store.state.contract);
     this.populateSelectAsset();
     this.getDeviceData();
+    this.getFreeIps();
   },
     beforeRouteEnter(to, from, next) {
     var currentUser = Store.state.user;

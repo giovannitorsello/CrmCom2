@@ -9,10 +9,46 @@ const nodemailer = require("nodemailer");
 const couchdb = require("./couchdb.js");
 const database = require("./database.js");
 const fiscal_check = require("./fiscal_check.js");
+const IPv4 = require("ip-num").IPv4;
+const IPv6 = require("ip-num").IPv6;
+const { Op } = require("sequelize");
 
 var list_cities = new Array();
 var list_countries = new Array();
 var list_postalcodes = new Array();
+
+function getBaseNetwork(networkClass) {
+  var data = networkClass.split("/");
+  var bitClass = data[1];
+  var octets = data[0].split(".");
+  if (bitClass === '8') return octets[0];
+  if (bitClass === '16') return octets[0] + "." + octets[1] + ".";
+  if (bitClass === '22') return octets[0] + "." + octets[1] + ".";
+  if (bitClass === '24')
+    return octets[0] + "." + octets[1] + "." + octets[2] + ".";
+  
+  return octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3];
+}
+
+function intToIpv4(ipInt) {
+  return (
+    (ipInt >>> 24) +
+    "." +
+    ((ipInt >> 16) & 255) +
+    "." +
+    ((ipInt >> 8) & 255) +
+    "." +
+    (ipInt & 255)
+  );
+}
+
+function ipv4ToInt(ip) {
+  return (
+    ip.split(".").reduce(function (ipInt, octet) {
+      return (ipInt << 8) + parseInt(octet, 10);
+    }, 0) >>> 0
+  );
+}
 
 module.exports = {
   import_Olo2OloDataXmlSystemMigrationModalities(filename) {
@@ -616,7 +652,7 @@ module.exports = {
       })
       .then((cst) => {
         //// Update section
-        if (cst && cst.id !== "") {          
+        if (cst && cst.id !== "") {
           cst.businessflag = customer_updated.businessflag;
           cst.firstname = customer_updated.firstname;
           cst.lastname = customer_updated.lastname;
@@ -637,9 +673,10 @@ module.exports = {
           cst.vatcode = customer_updated.vatcode;
           cst.sdicode = customer_updated.sdicode;
 
-          if(customer_updated.username) cst.username = customer_updated.username;
-          if(customer_updated.password) cst.password = customer_updated.password;
-          
+          if (customer_updated.username)
+            cst.username = customer_updated.username;
+          if (customer_updated.password)
+            cst.password = customer_updated.password;
 
           cst.save().then((cstupdate) => {
             if (cstupdate !== null) {
@@ -660,7 +697,7 @@ module.exports = {
         //New section
         if (!cst) {
           customer_updated.uid = this.makeUuid();
-          customer_updated.username=customer_updated.email;
+          customer_updated.username = customer_updated.email;
           customer_updated.password = this.makePassword(10);
           database.entities.customer.create(customer_updated).then((cstnew) => {
             if (cstnew !== null) {
@@ -681,7 +718,7 @@ module.exports = {
       });
   },
   save_contract(contract, callback) {
-    if(!contract.uid) contract.uid="0";
+    if (!contract.uid) contract.uid = "0";
     database.entities.contract
       .findOne({
         where: {
@@ -692,8 +729,8 @@ module.exports = {
       .then((item) => {
         if (item === null) {
           contract.uid = this.makeUuid();
-          contract.description=contract.customerId+"-"+contract.uid;
-          
+          contract.description = contract.customerId + "-" + contract.uid;
+
           database.entities.contract.create(contract).then((contractnew) => {
             if (contractnew !== null) {
               callback({
@@ -724,16 +761,68 @@ module.exports = {
     contrService.state = "active";
     contrService.billingPeriod = service.billingPeriod;
     contrService.dayinvoicereminder = service.dayinvoicereminder;
-    contrService.nopaydaysbeforedeactivation =service.nopaydaysbeforedeactivation;
+    contrService.nopaydaysbeforedeactivation =
+      service.nopaydaysbeforedeactivation;
     contrService.lastbillingdate = service.lastbillingdate;
     contrService.dayforexpirationwarning = service.dayforexpirationwarning;
     //contrService.contractId=contract.id;
     //contrService.serviceTemplateId=service.id;
-    
-    var newContractService=await database.entities.contractService.create(contrService);
+
+    var newContractService = await database.entities.contractService.create(
+      contrService
+    );
     newContractService.setContract(contract);
     newContractService.setServiceTemplate(service);
-    if(newContractService.id && newContractService!==0) return newContractService;
+    if (newContractService.id && newContractService !== 0)
+      return newContractService;
     else return null;
-    },
+  },
+  async getNextFreeIps() {
+    var foundFreeIps=[];
+    if (config && config.networks) {
+      for (
+        indexNetworks = 0;
+        indexNetworks < config.networks.classes.length;
+        indexNetworks++
+      ) {
+        var networkClass = config.networks.classes[indexNetworks];
+        var startAssignIp = config.networks.startAssignIp[indexNetworks];
+        var startIp = ipv4ToInt(startAssignIp);
+        var base = getBaseNetwork(networkClass);
+        await database.entities.deviceCustomer
+          .findAll({
+            attributes: ["ipv4"],
+            where: { ipv4: { [Op.like]: base + "%" } },
+            order: ["ipv4"],
+          })
+          .then(function (results) {
+            var ips = [];
+            // string to integer ip conversion
+            for (var i = 0; i < results.length; i++) {
+              var ipv4 = results[i].ipv4;              
+              ips.push(ipv4ToInt(ipv4));
+            }
+            // Order ip in long int format
+            ips = ips.sort(function (a, b) {
+              return a - b;
+            });
+            //Find hole in ip assignments
+            var freeIpv4 = ips.find((element, index, array) => {
+              if (
+                (array[index] > array[index - 1] + 1) && 
+                (array[index]>startIp)
+                )
+              return array[index-1]+1;
+            });
+            
+            if ((freeIpv4 & 255) !== 255) {
+              //jump ip finish for 255
+              foundip = intToIpv4(freeIpv4);
+              foundFreeIps.push(foundip);
+            }            
+          });
+      }
+    }
+    return foundFreeIps;
+  },
 };

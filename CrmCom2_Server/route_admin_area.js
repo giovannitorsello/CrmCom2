@@ -17,6 +17,7 @@ const axios = require("axios");
 //Geo library
 const proj4 = require("proj4");
 const pingServer = require("./pingServer.js");
+const { AppearanceCharacteristics } = require("pdf-lib");
 
 module.exports = {
   load_routes(app, database) {
@@ -1018,6 +1019,10 @@ module.exports = {
             devicesCustomer: dev,
           });
         });
+    });
+
+    app.post("/adminarea/deviceCustomer/getFreeIps", function (req, res) {
+      utility.getNextFreeIps();      
     });
 
     /////////////////////Service template ///////////////////////////
