@@ -7,6 +7,8 @@
       <strong>Cliente: {{ customerDescription }}</strong>
       <br />
       <strong>Contratto: {{ selectedContract.id }}</strong>
+      <br />
+      <strong>Ip disponibili: <div v-bind:key="ip" v-for="ip in freeIps"> ---> {{ ip }} </div> </strong>
     </p>
 
     <img
@@ -221,6 +223,7 @@ export default {
     return {
       selectedCustomer: {},
       selectedContract: {},
+      selectedService: {},
       selectedAsset: {},
       contractDescription: "",
       selectAssetOptions: [],
@@ -228,6 +231,7 @@ export default {
       companyasset: {},
       selectedDevice: {},
       devices: {},
+      freeIps: [],
       objDataSection: {},
       objDataPrimitives: {},
     }
@@ -241,7 +245,8 @@ export default {
       console.log("Retrieve free ips");
       this.$axios.post('/adminarea/deviceCustomer/getFreeIps')
         .then((response) => {
-
+          console.log(response);
+          this.freeIps=response.data.freeIps;
         });
     },
     populateSelectAsset() {
@@ -255,6 +260,19 @@ export default {
       this.selectedDevice.objData={};
       this.companyasset=this.selectedAsset.value;
       var res=Object.assign(this.selectedDevice.objData, this.companyasset.propDeviceStructure)
+      this.selectedService=this.$store.state.service;
+      console.log("Try to copy bandwith from service");
+      console.log(this.selectedService);
+      if(this.selectedService.objData && this.selectedService.objData.parameters) {
+        if(this.selectedDevice.objData && this.selectedDevice.objData.bandwith) {
+          console.log("Copy values in device parameters");
+          this.selectedDevice.objData.bandwith.upload_max=this.selectedService.objData.parameters.bandwidth_upload;
+          this.selectedDevice.objData.bandwith.download_max=this.selectedService.objData.parameters.bandwidth_download;
+          this.selectedDevice.objData.bandwith.upload_min=1000;
+          this.selectedDevice.objData.bandwith.download_min=1000;
+        }  
+      }
+      console.log(this.selectedDevice);
       this.$store.commit("changeDeviceCustomer", this.selectedDevice);
       this.parseDeviceObjData();
     },
@@ -296,14 +314,18 @@ export default {
     },
     newDevice() {
       this.selectedDevice={};
-      this.$store.commit("changeDeviceCustomer", this.selectedDevice);
+      this.$store.commit("changeDeviceCustomer", this.selectedDevice);      
       this.makeToast("Configura un nuovo dispositivo");
     },
     saveDevice: function() {
-      this.selectedDevice.companyasset=this.companyasset.company;
-      this.selectedDevice.techasset=this.companyasset.techasset;
+      this.companyasset=this.selectedAsset.value;
+      if(this.companyasset) {
+        this.selectedDevice.companyasset=this.companyasset.company;
+        this.selectedDevice.techasset=this.companyasset.techasset;        
+      }
       this.selectedDevice.state="active";
       this.selectedDevice.contractId=this.contract.id;
+      console.log(this.companyasset);
       this.$axios.post('/adminarea/deviceCustomer/update', {device: this.selectedDevice})
         .then((response) => {
               if (response.data.status === "OK") {

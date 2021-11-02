@@ -42,7 +42,7 @@ const Store = new Vuex.Store({
     changeDeviceCustomer(state, dev) {
       state.deviceCustomer = dev;
     },
-    changeService(state, srv) {
+    changeService(state, srv) {      
       state.service = srv;
     },
     changeServiceTemplate(state, srv) {

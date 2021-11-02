@@ -746,7 +746,7 @@ module.exports = {
     app.post("/adminarea/deviceCustomer/insert", function (req, res) {
       var obj = req.body;
       database.entities.deviceCustomer
-        .findOne({ where: { description: obj.mac } })
+        .findOne({ where: { ipv4: obj.ipv4 } })
         .then(function (item) {
           if (item === null) {
             database.entities.deviceCustomer
@@ -775,7 +775,7 @@ module.exports = {
       if (!obj_updated.id) {
         //Nuovo inserimento
         database.entities.deviceCustomer
-          .findOne({ where: { description: obj_updated.ipv4 } })
+          .findOne({ where: { ipv4: obj_updated.ipv4 } })
           .then(function (item) {
             if (item === null) {
               obj_updated.uid = utility.makeUuid();
@@ -1022,7 +1022,13 @@ module.exports = {
     });
 
     app.post("/adminarea/deviceCustomer/getFreeIps", function (req, res) {
-      utility.getNextFreeIps();      
+      utility.getNextFreeIps(freeIps => {
+        res.send({
+          status: "OK",
+          msg: "Free ips found",
+          freeIps: freeIps,
+        });
+      });
     });
 
     /////////////////////Service template ///////////////////////////
@@ -1134,6 +1140,7 @@ module.exports = {
                 obj_updated.nopaydaysbeforedeactivation;
               obj_selected.dayforexpirationwarning =
                 obj_updated.dayforexpirationwarning;
+                obj_selected.objData = obj_updated.objData;
               obj_selected.save().then(function (objupdate) {
                 if (objupdate !== null) {
                   res.send({
@@ -1236,7 +1243,7 @@ module.exports = {
                   contrService.lastbillingdate = srvTempl.lastbillingdate;
                   contrService.dayforexpirationwarning =
                     srvTempl.dayforexpirationwarning;
-                  
+                  contrService.objData = srvTempl.objData;
                   database.entities.contractService
                     .create(contrService)
                     .then(function (objnew) {
@@ -1279,6 +1286,7 @@ module.exports = {
             obj_updated.nopaydaysbeforedeactivation;
           obj_selected.dayforexpirationwarning =
             obj_updated.dayforexpirationwarning;
+            contrService.objData = srvTempl.objData;
           obj_selected.save().then((objupdate) => {
             if (objupdate !== null) {
               res.send({

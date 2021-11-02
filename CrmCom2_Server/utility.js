@@ -777,7 +777,7 @@ module.exports = {
       return newContractService;
     else return null;
   },
-  async getNextFreeIps() {
+  async getNextFreeIps(callback) {
     var foundFreeIps=[];
     if (config && config.networks) {
       for (
@@ -795,7 +795,7 @@ module.exports = {
             where: { ipv4: { [Op.like]: base + "%" } },
             order: ["ipv4"],
           })
-          .then(function (results) {
+          .then(function (results) {            
             var ips = [];
             // string to integer ip conversion
             for (var i = 0; i < results.length; i++) {
@@ -806,23 +806,30 @@ module.exports = {
             ips = ips.sort(function (a, b) {
               return a - b;
             });
-            //Find hole in ip assignments
-            var freeIpv4 = ips.find((element, index, array) => {
-              if (
-                (array[index] > array[index - 1] + 1) && 
-                (array[index]>startIp)
-                )
-              return array[index-1]+1;
-            });
             
-            if ((freeIpv4 & 255) !== 255) {
-              //jump ip finish for 255
+            var freeIpv4=startIp;
+            for (var i = 1; i < ips.length-1; i++) {
+              if (                
+                (ips[i+1]>startIp) &&
+                (ips[i+1]>ips[i]+1)                 
+              )
+              {
+                freeIpv4=ips[i]+1;
+                break;
+              }
+            }
+            
+            //jump 255,256,1 final numbers
+            if ((freeIpv4 & 255) === 255) freeIpv4=freeIpv4+3;
+
+            //jump ip finish for 255 and 1
+            if ((freeIpv4 & 255) !== 255 && (freeIpv4 & 255) !== 1) {              
               foundip = intToIpv4(freeIpv4);
               foundFreeIps.push(foundip);
             }            
           });
       }
     }
-    return foundFreeIps;
+    return callback(foundFreeIps);
   },
 };

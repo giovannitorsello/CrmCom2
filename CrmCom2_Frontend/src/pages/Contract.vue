@@ -700,6 +700,7 @@ export default {
             });
       },
       openService(serv) {
+        console.log(serv);
         this.$store.commit("changeService",serv);
         this.$router.push("/ServiceContract");
       },

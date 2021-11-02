@@ -165,6 +165,24 @@
       </q-form>
     </ValidationObserver>
 
+    <hr class="separator" />    
+      <div id="serviceTemplateParameters" v-if="selectedServiceTemplate.objData">
+        <h6>Parametri servizio</h6>
+        <div
+          class="row"
+          v-for="(primitive, primitiveName) in selectedServiceTemplate.objData.parameters"
+          v-bind:key="primitiveName"
+        >
+          <div class="col">
+            <q-input
+              :label="primitiveName"
+              v-bind:id="primitiveName"
+              v-model="selectedServiceTemplate.objData.parameters[primitiveName]"
+            />
+          </div>
+        </div>
+      </div>
+
     <q-table
       title="Modelli di servizio"
       :data="serviceTemplates"
@@ -240,6 +258,7 @@ export default {
         selectedServiceTemplate: {},
         serviceTemplates: [],
         serviceCategories: [],
+        selectedCategoryObject: {},
         selectedCategory: {label: "Internet", value: "Internet", icon: ''},
         txtFilter: "",
         initialPagination: {
@@ -322,7 +341,7 @@ export default {
             .then(response => {
                   if (response.data.status === "OK") {
                       response.data.serviceCategories.forEach(element => {
-                        this.serviceCategories.push({label: element.description, value: element.value, icon: ''})
+                        this.serviceCategories.push({label: element.description, description: element.description, value: element, icon: ''})
                       });
                       this.makeToast(response.data.msg);
                   }
@@ -331,8 +350,9 @@ export default {
                   console.log(error);
               });
     },
-    changeCategory: function() {
-
+    changeCategory: function() {      
+      this.selectedCategoryObject=this.selectedCategory.value;
+      console.log(this.selectedCategoryObject);
     },
     newServiceTemplate: function (){
       delete this.selectedServiceTemplate.id;
@@ -347,7 +367,16 @@ export default {
         else relUrl='/adminarea/serviceTemplate/update'
 
         //Set or update category
-        this.selectedServiceTemplate.category=this.selectedCategory.label;
+        this.selectedServiceTemplate.category=this.selectedCategoryObject.value;
+
+        //Set parameters for services
+        console.log(this.selectedCategoryObject.value);
+        if(this.selectedCategoryObject.parameters)
+        {
+          console.log("Save parameters");
+          this.selectedServiceTemplate.objData={};
+          this.selectedServiceTemplate.objData.parameters=this.selectedCategoryObject.parameters;
+        }
 
         this.$axios.post(relUrl, {serviceTemplate: this.selectedServiceTemplate})
             .then(response => {
@@ -363,6 +392,7 @@ export default {
               });
     },
     selectServiceTemplate: function (srv) {
+      console.log(srv);
       this.selectedServiceTemplate=srv;
       this.$store.commit("changeServiceTemplate",Object.assign({}, this.selectedServiceTemplate));
     },

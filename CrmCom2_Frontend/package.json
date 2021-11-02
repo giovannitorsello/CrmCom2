@@ -15,7 +15,7 @@
     "@capacitor/cli": "^3.0.1",
     "@capacitor/core": "^2.4.7",
     "@ionic/pwa-elements": "^3.0.2",
-    "@quasar/cli": "^1.2.1",
+    "@quasar/cli": "^1.2.2",
     "@quasar/extras": "^1.11.1",
     "@vue/devtools": "^5.3.3",
     "axios": "^0.18.1",
