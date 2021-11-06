@@ -86,7 +86,10 @@
               rules="required|decimal"
               v-slot="{ errors }"
             >
-              <q-input label="Costo di attivazione" v-model="selectedServiceTemplate.activationPrice" />
+              <q-input
+                label="Costo di attivazione"
+                v-model="selectedServiceTemplate.activationPrice"
+              />
               <span class="error">{{ errors[0] }}</span>
             </ValidationProvider>
           </div>
@@ -165,23 +168,24 @@
       </q-form>
     </ValidationObserver>
 
-    <hr class="separator" />    
-      <div id="serviceTemplateParameters" v-if="selectedServiceTemplate.objData">
-        <h6>Parametri servizio</h6>
-        <div
-          class="row"
-          v-for="(primitive, primitiveName) in selectedServiceTemplate.objData.parameters"
-          v-bind:key="primitiveName"
-        >
-          <div class="col">
-            <q-input
-              :label="primitiveName"
-              v-bind:id="primitiveName"
-              v-model="selectedServiceTemplate.objData.parameters[primitiveName]"
-            />
-          </div>
+    <hr class="separator" />
+    <div id="serviceTemplateParameters" v-if="selectedServiceTemplate.objData">
+      <h6>Parametri servizio</h6>
+      <div
+        class="row"
+        v-for="(primitive, primitiveName) in selectedServiceTemplate.objData
+          .parameters"
+        v-bind:key="primitiveName"
+      >
+        <div class="col">
+          <q-input
+            :label="primitiveName"
+            v-bind:id="primitiveName"
+            v-model="selectedServiceTemplate.objData.parameters[primitiveName]"
+          />
         </div>
       </div>
+    </div>
 
     <q-table
       title="Modelli di servizio"
@@ -350,9 +354,16 @@ export default {
                   console.log(error);
               });
     },
-    changeCategory: function() {      
+    changeCategory: function() {
       this.selectedCategoryObject=this.selectedCategory.value;
       console.log(this.selectedCategoryObject);
+      //Set parameters for services
+        console.log(this.selectedCategoryObject.value);
+        if(this.selectedCategoryObject.parameters)
+        {
+          this.selectedServiceTemplate.objData={};
+          this.selectedServiceTemplate.objData.parameters=this.selectedCategoryObject.parameters;
+        }
     },
     newServiceTemplate: function (){
       delete this.selectedServiceTemplate.id;
@@ -368,16 +379,6 @@ export default {
 
         //Set or update category
         this.selectedServiceTemplate.category=this.selectedCategoryObject.value;
-
-        //Set parameters for services
-        console.log(this.selectedCategoryObject.value);
-        if(this.selectedCategoryObject.parameters)
-        {
-          console.log("Save parameters");
-          this.selectedServiceTemplate.objData={};
-          this.selectedServiceTemplate.objData.parameters=this.selectedCategoryObject.parameters;
-        }
-
         this.$axios.post(relUrl, {serviceTemplate: this.selectedServiceTemplate})
             .then(response => {
                   if (response.data.status === "OK") {

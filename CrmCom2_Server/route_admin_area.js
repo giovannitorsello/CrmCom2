@@ -1141,6 +1141,7 @@ module.exports = {
               obj_selected.dayforexpirationwarning =
                 obj_updated.dayforexpirationwarning;
                 obj_selected.objData = obj_updated.objData;
+                obj_selected.changed("objData", true);
               obj_selected.save().then(function (objupdate) {
                 if (objupdate !== null) {
                   res.send({
