@@ -263,7 +263,7 @@ export default {
         serviceTemplates: [],
         serviceCategories: [],
         selectedCategoryObject: {},
-        selectedCategory: {label: "Internet", value: "Internet", icon: ''},
+        selectedCategory: {label: '', value: '', icon: ''},
         txtFilter: "",
         initialPagination: {
           sortBy: "category",
@@ -356,14 +356,17 @@ export default {
     },
     changeCategory: function() {
       this.selectedCategoryObject=this.selectedCategory.value;
+      this.selectedServiceTemplate.category=this.selectedCategoryObject.value;
+      console.log("Change service category");
       console.log(this.selectedCategoryObject);
       //Set parameters for services
-        console.log(this.selectedCategoryObject.value);
-        if(this.selectedCategoryObject.parameters)
-        {
-          this.selectedServiceTemplate.objData={};
-          this.selectedServiceTemplate.objData.parameters=this.selectedCategoryObject.parameters;
-        }
+      console.log(this.selectedCategoryObject.value);
+      if(this.selectedCategoryObject.parameters)
+      {
+        console.log("Init objData parameters for serviceTemplate");
+        this.selectedServiceTemplate.objData={};
+        this.selectedServiceTemplate.objData.parameters=this.selectedCategoryObject.parameters;
+      }
     },
     newServiceTemplate: function (){
       delete this.selectedServiceTemplate.id;
@@ -375,10 +378,8 @@ export default {
           relUrl='/adminarea/serviceTemplate/insert';
           this.selectedServiceTemplate.state="active"; //New services start active
         }
-        else relUrl='/adminarea/serviceTemplate/update'
-
-        //Set or update category
-        this.selectedServiceTemplate.category=this.selectedCategoryObject.value;
+        else relUrl='/adminarea/serviceTemplate/update';
+        
         this.$axios.post(relUrl, {serviceTemplate: this.selectedServiceTemplate})
             .then(response => {
                   if (response.data.status === "OK") {
