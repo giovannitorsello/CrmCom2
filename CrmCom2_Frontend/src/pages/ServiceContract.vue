@@ -143,6 +143,24 @@
         </div>
       </q-form>
     </ValidationObserver>
+
+    <hr class="separator" />    
+      <div id="serviceTemplateParameters" v-if="selectedService.objData">
+        <h6>Parametri servizio</h6>
+        <div
+          class="row"
+          v-for="(primitive, primitiveName) in selectedService.objData.parameters"
+          v-bind:key="primitiveName"
+        >
+          <div class="col">
+            <q-input
+              :label="primitiveName"
+              v-bind:id="primitiveName"
+              v-model="selectedService.objData.parameters[primitiveName]"
+            />
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 

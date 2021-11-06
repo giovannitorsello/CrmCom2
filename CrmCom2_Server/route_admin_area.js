@@ -1286,7 +1286,7 @@ module.exports = {
             obj_updated.nopaydaysbeforedeactivation;
           obj_selected.dayforexpirationwarning =
             obj_updated.dayforexpirationwarning;
-            contrService.objData = srvTempl.objData;
+            obj_selected.objData = obj_updated.objData;
           obj_selected.save().then((objupdate) => {
             if (objupdate !== null) {
               res.send({
