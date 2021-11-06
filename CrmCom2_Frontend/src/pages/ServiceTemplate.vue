@@ -378,7 +378,7 @@ export default {
         else relUrl='/adminarea/serviceTemplate/update'
 
         //Set or update category
-        this.selectedServiceTemplate.category=this.selectedCategoryObject.value;
+        this.selectedServiceTemplate.category=this.selectedCategoryObject.value;git 
         this.$axios.post(relUrl, {serviceTemplate: this.selectedServiceTemplate})
             .then(response => {
                   if (response.data.status === "OK") {

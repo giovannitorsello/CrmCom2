@@ -17,4 +17,5 @@ data_csv/*
 *.zip
 *.sql
 .env
-
+CrmCom_Frontend/.env
+CrmCom_Server/.env
