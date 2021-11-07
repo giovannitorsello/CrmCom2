@@ -396,7 +396,10 @@ export default {
     selectServiceTemplate: function (srv) {
       console.log(srv);
       this.selectedServiceTemplate=srv;
-      this.$store.commit("changeServiceTemplate",Object.assign({}, this.selectedServiceTemplate));
+      //Select correct category
+      this.selectedCategory=this.serviceCategories.find(element => (element.label===srv.category));
+      //Save state      
+      this.$store.commit("changeServiceTemplate",Object.assign({}, this.selectedServiceTemplate));      
     },
     deleteServiceTemplate: function (srv) {
       const isConfirmed = confirm("Confermi la cancellazione?");
