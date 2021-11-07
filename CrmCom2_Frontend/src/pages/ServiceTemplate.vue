@@ -361,10 +361,12 @@ export default {
       console.log(this.selectedCategoryObject);
       //Set parameters for services
       console.log(this.selectedCategoryObject.value);
+      if(!this.selectedServiceTemplate.objData || this.selectedServiceTemplate.objData.parameters)
       if(this.selectedCategoryObject.parameters)
       {
         console.log("Init objData parameters for serviceTemplate");
-        this.selectedServiceTemplate.objData={};
+        if(!this.selectedServiceTemplate.objData) this.selectedServiceTemplate.objData={};
+        //Load parameter structure
         this.selectedServiceTemplate.objData.parameters=this.selectedCategoryObject.parameters;
       }
     },
@@ -393,8 +395,7 @@ export default {
                   console.log(error);
               });
     },
-    selectServiceTemplate: function (srv) {
-      console.log(srv);
+    selectServiceTemplate: function (srv) {     
       this.selectedServiceTemplate=srv;
       //Select correct category
       this.selectedCategory=this.serviceCategories.find(element => (element.label===srv.category));
