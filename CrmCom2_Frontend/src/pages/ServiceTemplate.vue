@@ -173,8 +173,7 @@
       <h6>Parametri servizio</h6>
       <div
         class="row"
-        v-for="(primitive, primitiveName) in selectedServiceTemplate.objData
-          .parameters"
+        v-for="(primitive, primitiveName) in selectedServiceTemplate.objData.parameters"
         v-bind:key="primitiveName"
       >
         <div class="col">
@@ -400,7 +399,9 @@ export default {
       //Select correct category
       this.selectedCategory=this.serviceCategories.find(element => (element.label===srv.category));
       //Save state      
-      this.$store.commit("changeServiceTemplate",Object.assign({}, this.selectedServiceTemplate));      
+      this.$store.commit("changeServiceTemplate",Object.assign({}, this.selectedServiceTemplate));
+      console.log("Selected service templates is");
+      console.log(this.selectedServiceTemplate); 
     },
     deleteServiceTemplate: function (srv) {
       const isConfirmed = confirm("Confermi la cancellazione?");
