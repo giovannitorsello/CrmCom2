@@ -93,7 +93,7 @@
             <ValidationProvider
               name="Produttore"
               immediate
-              rules="required|alpha_spaces"
+              rules="required"
               v-slot="{ errors }"
             >
               <q-input label="Produttore" v-model="selectedDevice.vendor" />
@@ -104,7 +104,7 @@
             <ValidationProvider
               name="Modello"
               immediate
-              rules="required|alpha"
+              rules="required"
               v-slot="{ errors }"
             >
               <q-input label="Modello" v-model="selectedDevice.model" />
@@ -262,6 +262,7 @@ export default {
       console.log("Company asset");
       console.log(this.companyasset);
       this.selectedDevice.type="Router";
+      this.selectedDevice.description=this.customer.id+"-"+this.contract.id+"-"+this.service.id;
       this.selectedDevice.vendor=this.companyasset.vendor;
       this.selectedDevice.model=this.companyasset.model;
       this.selectedDevice.mac=this.companyasset.mac;
@@ -341,8 +342,12 @@ export default {
                   this.$store.commit("changeDeviceCustomer", this.selectedDevice);
                   this.makeToast(response.data.msg);
               }
+              else {
+                this.makeToastError(response.data.msg);
+              }
           })
           .catch(error => {
+              this.makeToast(response.data.msg);
               console.log(error);
           });
     },
@@ -376,8 +381,11 @@ export default {
     },
     makeToast(string) {
         this.$q.notify({color: 'green-4', textColor: 'white', icon: 'info', message: string});
-      }
     },
+    makeToastError(string) {
+        this.$q.notify({color: 'red-4', textColor: 'white', icon: 'info', message: string});
+    }
+  },
   computed: mapState({
     user: 'user',
     customer: 'customer',

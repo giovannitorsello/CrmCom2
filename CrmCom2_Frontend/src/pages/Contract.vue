@@ -1,9 +1,15 @@
 <template>
   <div id="contracts">
-    <h6>
-      Gestione contratti
-      <strong>{{ customerDescription }}</strong>
-    </h6>
+    <p>
+      Gestione <strong>{{ customerDescription }}</strong>
+      <br />
+      <span v-if="contract">Contratto: {{ contract.description }}</span>
+      <br />
+      <span v-if="selectedService">Servizio: {{ selectedService.description }}</span>
+      <br />
+      <span v-if="selectedDevice">Dispositivo: {{ selectedDevice.description }} -- {{ selectedDevice.ipv4 }} -- {{ selectedDevice.ipv6 }}</span>
+      <br />
+    </p>
     <img
       src="./img/actions/new.png"
       @click="newContract"
@@ -42,6 +48,7 @@
         </q-tabs>
         <q-separator />
         <q-tab-panels v-model="tab" animated>
+
           <q-tab-panel name="general">
             <div class="row">
               <div class="col">
@@ -150,6 +157,7 @@
               </div>
             </div>
           </q-tab-panel>
+
           <q-tab-panel name="services">
             <div class="row">
               <div class="col">
@@ -187,11 +195,10 @@
                 title="Servizi associati al contratto"
                 :data="services"
                 :columns="columnsTableServices"
-                row-key="id"
+                row-key="id"                
                 virtual-scroll
                 :pagination.sync="pagination"
                 :rows-per-page-options="[0]"
-                @row-click="openService"
               >
                 <template v-slot:header="props">
                   <q-tr :props="props">
@@ -205,7 +212,7 @@
                   </q-tr>
                 </template>
                 <template v-slot:body="props">
-                  <q-tr :props="props" v-bind:class="props.row.state">
+                  <q-tr :props="props" v-bind:class="props.row.state"  @click.native="selectService(props.row)">
                     <q-td auto-width>
                       <img
                         src="./img/actions/open.png"
@@ -239,6 +246,7 @@
               </q-table>
             </div>
           </q-tab-panel>
+
           <q-tab-panel name="documents">
             <!-- Identity card -->            
           <div class="row">
@@ -418,17 +426,17 @@
           </q-tab-panel>
           <q-tab-panel name="devices">
             <div v-if="devices">
-              <q-btn @click="addDevice">Aggiungi dispositivo</q-btn>
 
+              <q-btn @click="addDevice">Aggiungi dispositivo</q-btn>
+              
               <q-table
                 title="Dispositivi associati al contratto"
                 :data="devices"
                 :columns="columnsTableDevices"
-                row-key="id"
+                row-key="id"                
                 virtual-scroll
                 :pagination.sync="pagination"
                 :rows-per-page-options="[0]"
-                @row-click="openDevice"
               >
                 <template v-slot:header="props">
                   <q-tr :props="props">
@@ -442,7 +450,7 @@
                   </q-tr>
                 </template>
                 <template v-slot:body="props">
-                  <q-tr :props="props" v-bind:class="props.row.state">
+                  <q-tr :props="props" v-bind:class="props.row.state" @click.native="selectDevice(props.row)">
                     <q-td auto-width>
                       <img
                         src="./img/actions/open.png"
@@ -494,10 +502,11 @@ export default {
         tab: "general",
         contractDocumentUrl: "",
         serviceCategories: [],
-        selectedCategory: {description: "Vuoto", id: "0"},
-        selectedContract: {},
+        selectedCategory: {description: "Vuoto", id: "0"},        
         selectedCustomer: {},
-        selectedService: {description: "Vuoto", id: "0"},
+        selectedContract: {},
+        selectedService: {},
+        selectedDevice: {},        
         selectedServiceTemplate: {description: "Vuoto", id: "0"},
         contracts: [],
         devices: [],
@@ -528,7 +537,7 @@ export default {
                   {name: "asset",       label: "Asset",          field: row => {return row.companyasset+"("+row.techasset+")"}, sortable: true},
                   {name: "type",        label: "Tipologia",      field: row => row.type, sortable: true},
                   {name: "model",       label: "Modello",        field: row => row.model, sortable: true},
-                  {name: "ipv4",        label: "Ip",             field: row => {if(row.ipv6) return row.ipv6; else return row.ipv4;}, sortable: true},
+                  {name: "ipv4",        label: "Ip",             field: row => {if(row.ipv6) return row.ipv4+" --- "+row.ipv6; else return row.ipv4;}, sortable: true},
                   {name: "mac",         label: "Mac",            field: row => row.mac}
                   ],
         //Date picker variables
@@ -542,12 +551,10 @@ export default {
         }
     }
   },
-  methods: {
-      addDevice() {
-        this.$store.commit("changeContract", this.selectedContract);
-        this.$router.push("/DeviceCustomer");
-      },      
-      calculateDays() {        
+  methods: {          
+      calculateDays() {
+        if(!this.selectedContract.startdate) return;
+        if(!this.selectedContract.enddate) return;
         var start = this.selectedContract.startdate.split("-");
         var end = this.selectedContract.enddate.split("-");
         var begin = new Date(start[0], start[1] - 1, start[2]);
@@ -701,8 +708,14 @@ export default {
       },
       openService(serv) {
         console.log(serv);
+        this.selectedService=serv;
         this.$store.commit("changeService",serv);
         this.$router.push("/ServiceContract");
+      },
+      selectService(serv) {
+        console.log(serv);
+        this.selectedService=serv;
+        this.$store.commit("changeService",serv);        
       },
       activateService(serv) {
         serv.state="active";
@@ -748,6 +761,10 @@ export default {
         this.selectedDevice=dev;
         this.$store.commit("changeDeviceCustomer", this.selectedDevice);
         this.$router.push("/DeviceCustomer");
+      },
+      selectDevice(dev) {
+        this.selectedDevice=dev;
+        this.$store.commit("changeDeviceCustomer", this.selectedDevice);        
       },
       activateDevice(dev) {
         dev.state="active";
@@ -799,10 +816,33 @@ export default {
                 console.log(error);
             });
       },
+      addDevice() {        
+        if(!this.selectedService || !this.selectedService.id || this.selectedService.id===0 || this.selectedService.id==="0") {
+          this.makeToastError("Servizio non selezionato, torna alla schermata servizi del contratto.");
+          this.makeToastError("Associare il dispositivo ad un servizio");
+        }
+        else
+        {
+          this.$store.commit("changeContract", this.selectedContract);
+          this.$store.commit("changeDeviceCustomer", {});
+          this.$router.push("/DeviceCustomer");
+        }
+      },  
       deleteDevice(dev) {
         const isConfirmed = confirm("Confermi la cancellazione?");
-        if(isConfirmed) {console.log("Delete confirmed"); return "cancellato";}
-        return "";
+        if(isConfirmed)                   
+        this.$axios.post('/adminarea/deviceCustomer/delete', {device: dev})
+        .then(response => {
+              if (response.data.status === "OK") {
+                  this.selectedDevice = {};
+                  this.$store.commit("changeDeviceCustomer", {});
+                  this.makeToast(response.data.msg);
+                  this.getContractDevices();
+              }
+        })
+        .catch(error => {
+            console.log(error);
+        });            
       },      
       async newContract() {        
         this.initContractData();
@@ -810,7 +850,9 @@ export default {
         this.makeToast("Nuovo contratto, compila, salva ed aggiungi i servizi.");      
       },
       async saveContract() {
-        console.log(this.selectedContract.id)
+        console.log(this.selectedContract)
+
+        //Insert contract
         if(!this.selectedContract.id || this.selectedContract.id===null) {
           this.selectedContract.customerId=this.selectedCustomer.id;
           this.$axios.post('/adminarea/contract/insert', {contract: this.selectedContract})
@@ -833,9 +875,8 @@ export default {
             });
         }
         
-        //Update contract
-        
-        else if(this.selectedContract.id){
+        //Update contract        
+        else if(this.selectedContract.id && this.selectedContract.id!==0 && this.selectedContract.id!=="0"){
           this.selectedContract.customerId=this.selectedCustomer.id;                 
           this.$axios.post('/adminarea/contract/update', {contract: this.selectedContract})
             .then(response => {
@@ -960,6 +1001,9 @@ export default {
   computed: mapState({
     user: 'user',
     customer: 'customer',
+    contract: 'contract',
+    service: 'service',
+    device: 'device',
     customerDescription() {
       const customer=this.customer;
       if(customer.vatcode && customer.vatcode!=="")

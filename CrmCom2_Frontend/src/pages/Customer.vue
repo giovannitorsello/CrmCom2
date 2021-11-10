@@ -357,7 +357,7 @@
           </q-tr>
         </template>
         <template v-slot:body="props">
-          <q-tr :props="props" v-bind:class="props.row.state">
+          <q-tr :props="props" v-bind:class="props.row.state" @click.native="selectContract(props.row)">
             <q-td auto-width>
               <img
                 src="./img/actions/open.png"
@@ -432,6 +432,10 @@ export default {
       openContract: function (ctr) {
           this.$store.commit("changeContract", ctr);
           this.$router.push("/Contract")
+      },
+      selectContract: function (ctr) {
+          this.selectContract=ctr;
+          this.$store.commit("changeContract", ctr);          
       },
       activateContract: function(ctr) {
         ctr.state="active";

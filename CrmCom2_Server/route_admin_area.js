@@ -793,8 +793,8 @@ module.exports = {
             } else {
               res.send({
                 status: "error",
-                msg: "Device creation error",
-                deviceCustomer: obj,
+                msg: "Device creation error (check ip number)",
+                deviceCustomer: obj_updated,
               });
             }
           });
@@ -842,7 +842,7 @@ module.exports = {
                 res.send({
                   status: "error",
                   msg: "Device update error",
-                  deviceCustomer: obj,
+                  deviceCustomer: obj_updated,
                 });
               }
             });
