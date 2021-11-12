@@ -563,6 +563,7 @@ export default {
         this.selectedContract.duration=duration/86400000;
       },
       initContractData() {
+        this.selectedCustomer=Object.assign({}, this.$store.state.customer);
         this.services=[];
         this.devices=[];
         this.selectedContract.description="Internet Home";
@@ -590,16 +591,12 @@ export default {
         this.getServiceTemplates();
         this.getContractServices();
         this.getContractDevices();
-        // Format date        
-        //this.selectedContract.startdate=new Date(this.selectedContract.startdate);
-        //this.selectedContract.enddate=new Date(this.selectedContract.enddate);
-        //this.selectedContract.startdate=this.selectedContract.startdate.getDay()+"-"+this.selectedContract.startdate.getMonth()+"-"+this.selectedContract.startdate.getYear();
-        //this.selectedContract.enddate=this.selectedContract.enddate.getDay()+"-"+this.selectedContract.enddate.getMonth()+"-"+this.selectedContract.enddate.getYear();
         
         if(!this.selectedContract.id) {
           //Copy customer Address in Contract Data
           this.initContractData();
         }
+        console.log(this.selectedContract);
       },
       printContract: function() {
         this.$store.commit("changeCustomer", this.selectedCustomer);
@@ -850,16 +847,15 @@ export default {
         this.makeToast("Nuovo contratto, compila, salva ed aggiungi i servizi.");      
       },
       async saveContract() {
-        console.log(this.selectedContract)
-
         //Insert contract
         if(!this.selectedContract.id || this.selectedContract.id===null) {
           this.selectedContract.customerId=this.selectedCustomer.id;
           this.$axios.post('/adminarea/contract/insert', {contract: this.selectedContract})
             .then(response => {
-                  if (response.data.status === "OK") {                    
-                    this.selectedContract = response.data.contract;
-                    this.$store.commit("changeContract", this.selectedContract);
+                  if (response.data.status === "OK") {
+                    this.$store.commit("changeContract", response.data.contract);
+                    this.selectedContract = {};                    
+                    //this.selectedContract=Object.assign({}, this.$store.state.contract);
                     this.makeToast(response.data.msg);
                     this.getContractData();
                     this.makeToast("New contract.");
@@ -1013,6 +1009,7 @@ export default {
     }
     }),
   mounted () {
+    this.$store.commit("changeContract", {});
     this.getContractData();
   },
   created() {

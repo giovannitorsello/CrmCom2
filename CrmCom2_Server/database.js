@@ -397,7 +397,8 @@ module.exports = {
         contract.save().then((ctrupdate) => {
             ///Find all service contract
             this.entities.contractService.findAll({ where: { contractId: ctrupdate.id } }).then((services) => {
-                if (services) {
+                if(!services || services.length===0)  callback(ctrupdate);
+                else if (services) {                    
                     services.forEach((ctrServ, indexServ, arrayServ) => {
                         ctrServ.state = contract.state;
                         ctrServ.save();

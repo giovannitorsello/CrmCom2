@@ -876,21 +876,29 @@ module.exports = {
       "/adminarea/deviceCustomer/get_all_by_contract",
       function (req, res) {
         var idContract = req.body.idContract;
-        database.entities.deviceCustomer
-          .findAll({ where: { contractId: idContract } })
-          .then(function (results) {
-            if (results)
-              res.send({
-                status: "OK",
-                msg: "Devices found",
-                devicesCustomer: results,
-              });
-            else
-              res.send({
-                status: "OK",
-                msg: "Devices not found",
-                devicesCustomer: {},
-              });
+        if(!idContract) {
+          res.send({
+            status: "OK",
+            msg: "Devices found",
+            devicesCustomer: {},
+          });
+        }
+        else
+          database.entities.deviceCustomer
+            .findAll({ where: { contractId: idContract } })
+            .then(function (results) {
+              if (results)
+                res.send({
+                  status: "OK",
+                  msg: "Devices found",
+                  devicesCustomer: results,
+                });
+              else
+                res.send({
+                  status: "OK",
+                  msg: "Devices not found",
+                  devicesCustomer: {},
+                });
           });
       }
     );
@@ -1329,23 +1337,32 @@ module.exports = {
 
     app.post(
       "/adminarea/contractService/get_all_by_contract",
-      function (req, res) {
+      function (req, res) {        
         var idContract = req.body.idContract;
-        database.entities.contractService
-          .findAll({ where: { contractId: idContract } })
-          .then(function (results) {
-            if (results)
-              res.send({
-                status: "OK",
-                msg: "Services found",
-                services: results,
-              });
-            else
-              res.send({
-                status: "error",
-                msg: "Services not found",
-                services: results,
-              });
+
+        if(!idContract) {
+          res.send({
+            status: "OK",
+            msg: "Services found",
+            services: {},
+          });          
+        }
+        else
+          database.entities.contractService
+            .findAll({ where: { contractId: idContract } })
+            .then(function (results) {
+              if (results)
+                res.send({
+                  status: "OK",
+                  msg: "Services found",
+                  services: results,
+                });
+              else
+                res.send({
+                  status: "error",
+                  msg: "Services not found",
+                  services: results,
+                });
           });
       }
     );

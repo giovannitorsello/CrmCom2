@@ -332,6 +332,9 @@ export default {
         this.selectedDevice.companyasset=this.companyasset.company;
         this.selectedDevice.techasset=this.companyasset.techasset;        
       }
+      if(this.companyasset.company==="") {
+        makeToastError("Seleziona un Asset in alto");
+      }
       this.selectedDevice.state="active";
       this.selectedDevice.contractId=this.contract.id;
       console.log(this.companyasset);
