@@ -308,7 +308,6 @@
             </div>
           </div>
           
-
           <!--Identity fiscalcode/health card -->
           <div class="row">
             <div class="col">
@@ -327,6 +326,7 @@
               </ValidationProvider>
             </div>
           </div>
+
           <div class="row">
             <div class="col">
               <q-btn                    
@@ -370,6 +370,7 @@
           </div>
           
           </q-tab-panel>
+
           <q-tab-panel name="invoice">
             <div class="row">
               <div class="col">
@@ -424,6 +425,7 @@
               </div>
             </div>
           </q-tab-panel>
+
           <q-tab-panel name="devices">
             <div v-if="devices">
 
@@ -563,7 +565,6 @@ export default {
         this.selectedContract.duration=duration/86400000;
       },
       initContractData() {
-        this.selectedCustomer=Object.assign({}, this.$store.state.customer);
         this.services=[];
         this.devices=[];
         this.selectedContract.description="Internet Home";
@@ -585,8 +586,8 @@ export default {
       },
       getContractData() {
         const store=this.$store;
-        this.selectedContract=Object.assign({}, this.$store.state.contract);
         this.selectedCustomer=Object.assign({}, this.$store.state.customer);
+        this.selectedContract=Object.assign({}, this.$store.state.contract);        
         this.getAllServiceCategories();
         this.getServiceTemplates();
         this.getContractServices();
@@ -745,6 +746,7 @@ export default {
           .then(response => {
                 if (response.data.status === "OK") {
                     this.makeToast("Servizio eliminato");
+                    this.$store.commit("changeService", {});
                     this.getContractServices();
                 }
             })
@@ -855,7 +857,6 @@ export default {
                   if (response.data.status === "OK") {
                     this.$store.commit("changeContract", response.data.contract);
                     this.selectedContract = {};                    
-                    //this.selectedContract=Object.assign({}, this.$store.state.contract);
                     this.makeToast(response.data.msg);
                     this.getContractData();
                     this.makeToast("New contract.");
@@ -982,6 +983,9 @@ export default {
           });
       },
       exit: function() {
+        this.$store.commit("changeContract", {});
+        this.$store.commit("changeContractServie", {});
+        this.$store.commit("changeDeviceCustomer", {});
         this.$router.push("/Customer");
       },
       makeToast(string) {
@@ -1008,8 +1012,7 @@ export default {
         return customer.lastname+" "+customer.firstname;
     }
     }),
-  mounted () {
-    this.$store.commit("changeContract", {});
+  mounted () {    
     this.getContractData();
   },
   created() {

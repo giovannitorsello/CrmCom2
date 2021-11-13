@@ -212,7 +212,7 @@ module.exports = {
             vendor: { type: Sequelize.STRING, allowNull: false }, //TPLINK, Microtik, ecc
             model: { type: Sequelize.STRING, allowNull: false },
             mac: { type: Sequelize.STRING, allowNull: false },
-            ipv4: { type: Sequelize.STRING, allowNull: false },
+            ipv4: { type: Sequelize.STRING, allowNull: false, unique: true },
             ipv6: { type: Sequelize.STRING, allowNull: true },
             state: { type: Sequelize.STRING, allowNull: false }, //active, suspended, 
             monitored: {type: Sequelize.STRING, allowNull: true}, //empty, monitored

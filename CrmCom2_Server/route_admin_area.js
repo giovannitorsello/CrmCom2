@@ -1414,6 +1414,13 @@ module.exports = {
                     contract: objnew,
                   });
                 }
+                else {
+                  res.send({
+                    status: "error",
+                    msg: "Contract creation error check all field data",
+                    contract: obj,
+                  });
+                }
               });
             } else {
               res.send({

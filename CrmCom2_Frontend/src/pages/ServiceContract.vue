@@ -206,7 +206,7 @@ export default {
             .then(response => {
                   if (response.data.status === "OK") {
                       this.selectedService = {};
-                      this.$store.commit("changeService", this.selectedService);
+                      this.$store.commit("changeService", {});
                       this.makeToast(response.data.msg);
                   }
               })
@@ -215,6 +215,7 @@ export default {
               });
       },
       exit: function() {
+        this.$store.commit("changeService", {});
         this.$router.push("/Contract");
       },
       makeToast(string) {

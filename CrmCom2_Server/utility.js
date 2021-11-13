@@ -789,13 +789,13 @@ module.exports = {
         var startAssignIp = config.networks.startAssignIp[indexNetworks];
         var startIp = ipv4ToInt(startAssignIp);
         var base = getBaseNetwork(networkClass);
-        await database.entities.deviceCustomer
+        results=await database.entities.deviceCustomer
           .findAll({
             attributes: ["ipv4"],
             where: { ipv4: { [Op.like]: base + "%" } },
             order: ["ipv4"],
           })
-          .then(function (results) {            
+                     
             var ips = [];
             // string to integer ip conversion
             for (var i = 0; i < results.length; i++) {
@@ -808,7 +808,7 @@ module.exports = {
             });
             
             var freeIpv4=startIp;
-            for (var i = 1; i < ips.length-1; i++) {
+            for (var i = 0; i <= ips.length-1; i++) {
               if (                
                 (ips[i+1]>startIp) &&
                 (ips[i+1]>ips[i]+1)                 
@@ -817,7 +817,13 @@ module.exports = {
                 freeIpv4=ips[i]+1;
                 break;
               }
+
+              //If no holes are present in ip assignments
+              if(i===ips.length-1) 
+                freeIpv4=ips[ips.length-1]+1;
+
             }
+            
             
             //jump 255,256,1 final numbers
             if ((freeIpv4 & 255) === 255) freeIpv4=freeIpv4+3;
@@ -826,8 +832,7 @@ module.exports = {
             if ((freeIpv4 & 255) !== 255 && (freeIpv4 & 255) !== 1) {              
               foundip = intToIpv4(freeIpv4);
               foundFreeIps.push(foundip);
-            }            
-          });
+            }                      
       }
     }
     return callback(foundFreeIps);

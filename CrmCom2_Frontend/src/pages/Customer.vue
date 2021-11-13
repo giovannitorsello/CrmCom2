@@ -427,6 +427,7 @@ export default {
   methods: {
       addContract: function () {
         this.$store.commit("changeCustomer", this.selectedCustomer);
+        this.$store.commit("changeContract", {});
         this.$router.push("/Contract");
       },
       openContract: function (ctr) {

@@ -8,7 +8,11 @@
       <br />
       <strong>Contratto: {{ selectedContract.id }}</strong>
       <br />
-      <strong>Ip disponibili: <div v-bind:key="ip" v-for="ip in freeIps"> ---> {{ ip }} </div> </strong>
+      <strong>Ip disponibili: 
+          <div v-bind:key="ip" v-for="ip in freeIps"> 
+            <span  @click="selectIpv4(ip)">---> {{ ip }}</span>
+          </div>
+      </strong>
     </p>
 
     <img
@@ -241,6 +245,10 @@ export default {
     ValidationObserver
   },
   methods: {
+    selectIpv4(ip) {      
+      this.selectedDevice.ipv4=ip;
+      this.getFreeIps();
+    },
     getFreeIps() {
       console.log("Retrieve free ips");
       this.$axios.post('/adminarea/deviceCustomer/getFreeIps')
@@ -327,14 +335,18 @@ export default {
       this.makeToast("Configura un nuovo dispositivo");
     },
     saveDevice: function() {
+      console.log(this.selectedAsset);
+      if(!this.selectedAsset || !this.selectedAsset.value) {
+        this.makeToastError("Seleziona un Asset in alto");
+        return;
+      }
+
       this.companyasset=this.selectedAsset.value;
       if(this.companyasset) {
         this.selectedDevice.companyasset=this.companyasset.company;
         this.selectedDevice.techasset=this.companyasset.techasset;        
       }
-      if(this.companyasset.company==="") {
-        makeToastError("Seleziona un Asset in alto");
-      }
+      
       this.selectedDevice.state="active";
       this.selectedDevice.contractId=this.contract.id;
       console.log(this.companyasset);
@@ -344,6 +356,7 @@ export default {
                   this.selectedDevice = response.data.deviceCustomer;
                   this.$store.commit("changeDeviceCustomer", this.selectedDevice);
                   this.makeToast(response.data.msg);
+                  this.getFreeIps();
               }
               else {
                 this.makeToastError(response.data.msg);
@@ -372,6 +385,7 @@ export default {
       }
     },
     exit: function() {
+      this.$store.commit("changeDeviceCustomer", {});
       this.$router.push("/Contract");
     },
     monitorDevice() {
