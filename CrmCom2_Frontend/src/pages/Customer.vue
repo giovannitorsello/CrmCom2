@@ -471,7 +471,7 @@ export default {
           .then(response => {
                 if (response.data.status === "OK") {
                     this.selectedContract = response.data.contract;
-                    this.$store.commit("changeContract", this.selectedContract);
+                    this.$store.commit("changeContract", {});
                     this.getCustomerContracts();
                 }
             })

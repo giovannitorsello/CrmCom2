@@ -1495,8 +1495,8 @@ module.exports = {
         .findOne({ where: { id: objsel.id } })
         .then(function (obj) {
           if (obj !== null) {
-            //Check if invoices exists
-            obj.destroy();
+            //Delete all services, device and contract
+            database.deleteContract(obj);
             res.send({
               status: "OK",
               msg: "Contract deleted successfully",

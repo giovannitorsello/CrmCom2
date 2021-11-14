@@ -228,12 +228,12 @@ export default {
       selectedCustomer: {},
       selectedContract: {},
       selectedService: {},
+      selectedDevice: {},
       selectedAsset: {},
       contractDescription: "",
       selectAssetOptions: [],
       companyassets: companyassetsJson,
       companyasset: {},
-      selectedDevice: {},
       devices: {},
       freeIps: [],
       objDataSection: {},
@@ -274,8 +274,8 @@ export default {
       this.selectedDevice.vendor=this.companyasset.vendor;
       this.selectedDevice.model=this.companyasset.model;
       this.selectedDevice.mac=this.companyasset.mac;
-      this.selectedDevice.ipv4=this.companyasset.ipv4;
-      this.selectedDevice.ipv6=this.companyasset.ipv6;
+      //this.selectedDevice.ipv4=this.companyasset.ipv4;
+      //this.selectedDevice.ipv6=this.companyasset.ipv6;
       var res=Object.assign(this.selectedDevice.objData, this.companyasset.propDeviceStructure)
       this.selectedService=this.$store.state.service;
       console.log("Try to copy bandwith from service");

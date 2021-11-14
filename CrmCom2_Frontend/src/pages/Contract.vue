@@ -562,7 +562,7 @@ export default {
         var begin = new Date(start[0], start[1] - 1, start[2]);
         var end = new Date(end[0], end[1] - 1, end[2]);
         var duration=end.getTime()-begin.getTime();                
-        this.selectedContract.duration=duration/86400000;
+        this.selectedContract.duration=Math.ceil(duration/86400000);
       },
       initContractData() {
         this.services=[];
@@ -984,7 +984,7 @@ export default {
       },
       exit: function() {
         this.$store.commit("changeContract", {});
-        this.$store.commit("changeContractServie", {});
+        this.$store.commit("changeService", {});
         this.$store.commit("changeDeviceCustomer", {});
         this.$router.push("/Customer");
       },

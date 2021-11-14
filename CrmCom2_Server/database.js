@@ -424,6 +424,26 @@ module.exports = {
         });
     },
 
+    async deleteContract(contract) {
+        if(!contract || !contract.id) return;
+        this.entities.contractService.findAll({ where: { contractId: contract.id } }).then((services) => {
+            if (services) {   
+                services.forEach((ctrServ, indexServ, arrayServ) => {
+                    ctrServ.destroy();
+                });
+            }
+        });
+        this.entities.deviceCustomer.findAll({ where: { contractId: contract.id } }).then((devices) => {
+            if (devices)
+            {
+                devices.forEach(function (dev, indexDev, arrayDev) {
+                    dev.destroy();                    
+                });
+            }
+        });
+        contract.destroy();
+    },
+
     getCustomerContracts(customer, callback) {
         this.entities.contract.findAll({ where: { customerId: customer.id } }).then((contracts) => {
             callback(contracts);
