@@ -247,7 +247,8 @@ export default {
   methods: {
     selectIpv4(ip) {      
       this.selectedDevice.ipv4=ip;
-      this.getFreeIps();
+      if(this.selectedDevice.objData && this.selectedDevice.objData.ip)
+        this.selectedDevice.objData.ip=ip;
     },
     getFreeIps() {
       console.log("Retrieve free ips");
