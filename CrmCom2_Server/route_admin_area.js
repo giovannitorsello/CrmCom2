@@ -17,6 +17,7 @@ const axios = require("axios");
 //Geo library
 const proj4 = require("proj4");
 const pingServer = require("./pingServer.js");
+const freeradius = require("./freeradius.js");
 const { AppearanceCharacteristics } = require("pdf-lib");
 
 module.exports = {
