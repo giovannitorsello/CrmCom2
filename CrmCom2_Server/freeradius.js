@@ -42,7 +42,6 @@ class MySqlDatabase {
 
   createUser(user) {
     var connection = this.conn;
-
     //Update radcheck
     connection.query(
       "SELECT * from radcheck where username = ?",
@@ -55,9 +54,12 @@ class MySqlDatabase {
             op: ":=",
             value: user.password,
           };
-          if (results.length > 0) data.id=results[0].id;
+
+          var query="";
+          if (results.length === 0) query="replace into radcheck SET ?";
+          else query="update radcheck SET ? where id="+results[0].id;
           connection.query(
-            "replace into radcheck SET ?",
+            query,
             data,
             function (error, results, fields) {
               if (error) throw error;
@@ -78,8 +80,12 @@ class MySqlDatabase {
               groupname: user.group,
               priority: user.priority,
             };
+            var query="";
+            if (results.length === 0) query="replace into radusergroup SET ?";
+            else query="update radusergroup SET ? where username='"+results[0].username+"'";
+          
             connection.query(
-              "replace into radusergroup SET ?",
+              query,
               data,
               function (error, results, fields) {
                 if (error) throw error;
@@ -89,6 +95,39 @@ class MySqlDatabase {
           
         }
       );
+  }
+
+  setRadiusReply(username, attribute, op, value) {
+    var connection = this.conn;
+    connection.query(
+      "SELECT * from radreply where username = ? and attribute = ?",
+      [username,attribute],
+      function (error, results, fields) {
+          var query="";
+          if (results.length === 0) query="replace into radreply SET ?";
+          else query="update radreply SET ? where id="+results[0].id;
+          var data = {
+            username: username,
+            attribute: attribute,
+            value: value,
+            op: op,
+          };
+          connection.query(
+            query,
+            data,
+            function (error, results, fields) {
+              if (error) throw error;
+              console.log("Radius reply attribute insert");
+            }
+          );
+    });
+  }
+
+  setConnectionParameters(params) {
+    if (!params.ip) params.ip = "169.254.160.169";
+    if (!params.netmask) params.netmask = "255.255.255.0";
+    this.setRadiusReply(params.username, "Framed-IP-Address", ":=", params.ip);
+    this.setRadiusReply(params.username, "Framed-IP-Netmask", ":=", params.netmask);
   }
 
   deleteUser(user) {
@@ -120,53 +159,21 @@ class MySqlDatabase {
     }
   }
 
-  setConnectionParameters(params) {
-    var connection = this.conn;
-    var data = {
-      username: params.username,
-      attribute: "Framed-IP-Address",
-      value: params.ip,
-      op: ":=",
-    };
-    connection.query(
-      "replace into radreply SET ?",
-      data,
-      function (error, results, fields) {
-        if (error) throw error;
-        console.log("Ip insert");
-      }
-    );
-
-    if (!params.netmask) params.netmask = "255.255.255.0";
-    data = {
-      username: params.username,
-      attribute: "Framed-IP-Netmask",
-      value: params.netmask,
-      op: ":=",
-    };
-    connection.query(
-      "replace into radreply SET ?",
-      data,
-      function (error, results, fields) {
-        if (error) throw error;
-        console.log("Netmask insert");
-      }
-    );
-  }
+  
 }
 
 var db = new MySqlDatabase();
 db.connect(function () {
   db.createUser({
     username: "aaa",
-    password: "bbb",
-    group: "1",
-    priority: "1",
+    password: "kasdffkk00",
+    group: "501",
+    priority: "502",
   });
   db.setConnectionParameters({
     username: "aaa",
-    ip: "192.168.1.1",
-    netmask: "255.255.255.224",
+    ip: "192.168.5.17",
+    netmask: "255.255.255.0",
   });
 
   //db.deleteUser({ username: "aaa" });
