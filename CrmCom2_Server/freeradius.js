@@ -1,7 +1,7 @@
 const config = require("./config.js").load();
 const mysql = require("mysql");
 
-class MySqlDatabase {
+class Freeradius {
   constructor() {
     this.conn = mysql.createConnection({
       host: config.radius.hostname,
@@ -123,11 +123,19 @@ class MySqlDatabase {
     });
   }
 
-  setConnectionParameters(params) {
+  setIp(params) {
     if (!params.ip) params.ip = "169.254.160.169";
     if (!params.netmask) params.netmask = "255.255.255.0";
     this.setRadiusReply(params.username, "Framed-IP-Address", ":=", params.ip);
     this.setRadiusReply(params.username, "Framed-IP-Netmask", ":=", params.netmask);
+  }
+
+  setBandwidth(params) {
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Down", ":=", params.download_max);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Down", ":=", params.download_min);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Up", ":=", params.upload_max);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Up", ":=", params.upload_min);
+    this.setRadiusReply(params.username,"Mikrotik-Rate-Limit",":=", params.download_max+"/"+params.upload_max);
   }
 
   deleteUser(user) {
@@ -159,24 +167,83 @@ class MySqlDatabase {
     }
   }
 
-  
+  checkUsers(usernames) {
+    var connection = this.conn;
+    //Update radcheck
+    connection.query(
+      "SELECT * from radcheck",
+      function (error, results, fields) {
+        results.forEach(user => {
+          if(!usernames.includes(user.username))
+            this.deleteUser(user.username);
+        });
+      });
+  }
 }
 
-var db = new MySqlDatabase();
-db.connect(function () {
-  db.createUser({
+var fr = new Freeradius();
+fr.connect(function () {
+  /*fr.createUser({
     username: "aaa",
     password: "kasdffkk00",
     group: "501",
     priority: "502",
   });
-  db.setConnectionParameters({
+  fr.setIp({
     username: "aaa",
     ip: "192.168.5.17",
     netmask: "255.255.255.0",
   });
-
-  //db.deleteUser({ username: "aaa" });
+  fr.setBandwidth({
+    username: "aaa",
+    download_min: "1000",
+    download_max: "50000",
+    upload_min: "1000",
+    upload_max: "20000",
+  });
+  */
+  //fr.deleteUser({ username: "aaa" });
 });
 
-module.exports = {};
+module.exports = {
+  updateDevice: function(deviceCustomer) {
+    if(deviceCustomer && deviceCustomer.objData &&        
+      deviceCustomer.objData.ppoe) {
+        fr.createUser({
+          username: deviceCustomer.objData.ppoe.username, 
+          password: deviceCustomer.objData.ppoe.password,
+          group: deviceCustomer.objData.companyasset+"-"+deviceCustomer.objData.techasset,
+          priority: "1" 
+        });
+        if(!deviceCustomer.objData.ppoe.netmask) deviceCustomer.objData.ppoe.netmask="255.255.255.255";
+        fr.setIp({
+          username: deviceCustomer.objData.ppoe.username, 
+          ip: deviceCustomer.objData.ppoe.ip, 
+          netmask: deviceCustomer.objData.ppoe.netmask,          
+        });
+      }
+      if(deviceCustomer && deviceCustomer.objData &&         
+        deviceCustomer.objData.bandwith) {
+          fr.setBandwidth({
+            username: deviceCustomer.objData.ppoe.username,
+            download_min: deviceCustomer.objData.bandwith.download_min, 
+            download_max: deviceCustomer.objData.bandwith.download_max,
+            upload_min:   deviceCustomer.objData.bandwith.upload_min, 
+            upload_max:   deviceCustomer.objData.bandwith.upload_max, 
+          });
+      }
+  },
+
+  deleteDevice: function(deviceCustomer) {
+    if(deviceCustomer && deviceCustomer.objData && 
+      deviceCustomer.objData.ppoe) {
+        fr.deleteUser({
+          username: deviceCustomer.objData.ppoe.username,           
+        });        
+      }
+  },
+
+  checkOrfanUsers: function (ppoe_usernames) {
+    fr.checkUsers(ppoe_usernames);
+  }
+};

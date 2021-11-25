@@ -1,5 +1,6 @@
 var config = require("./config.js").load();
 var utility = require("./utility.js");
+const schedule = require('node-schedule');
 
 const fs = require('fs');
 const https = require('https');
@@ -25,6 +26,7 @@ var olo2olo= require('./olo2olo/olo2olo.js');
 var routes_admin_area = require("./route_admin_area.js");
 var routes_cust_area = require("./route_customer_area.js");
 var routes_utilities = require("./route_utilities.js");
+const freeradius = require("./freeradius.js");
 
 var pingServerProcess=null;
 var app = express();
@@ -37,7 +39,7 @@ app.use(session({
   cookie: { secure: true }
 }))
 
-//settin process to clean temporary folder as cache and uploads 
+//settinng process to clean temporary folder as cache and uploads 
 var fileWatcherUpload = new FileCleaner(process.cwd() + '/uploads/', 600000, '* */45 * * * *', { start: true });
 var fileWatcherCache = new FileCleaner(process.cwd() + '/cache/', 600000, '* */45 * * * *', { start: true });
 
@@ -45,7 +47,6 @@ process.on('unhandledRejection', error => { console.log('Warning', error.message
 process.chdir(process.cwd());
 
 
-app.use(cors());
 //enable cross origin
 app.use(cors());
 //covert body to JSON
@@ -102,3 +103,20 @@ database.setup(app, function () {
   //utility.notify_registration_by_email({});
 });
 
+//Schedule automatic operations
+
+// Radius alignments and check
+const job = schedule.scheduleJob('*/1 * * * *', function(){
+  database.entities.deviceCustomer.findAll().then(devices => {
+    var ppoe_usernames=[];
+    devices.forEach((device, index, array) => {
+      if(device.objData && device.objData.ppoe) {
+        freeradius.updateDevice(device);
+        ppoe_usernames.push(device.objData.ppoe.username);
+        if(index===array.length-1) {
+          freeradius.checkOrfanUsers(ppoe_usernames);
+        }
+      }
+    })
+  })
+});

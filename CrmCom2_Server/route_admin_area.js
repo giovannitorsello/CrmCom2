@@ -754,6 +754,7 @@ module.exports = {
               .create(obj)
               .then(function (objnew) {
                 if (objnew !== null) {
+                  freeradius.updateDevice(objnew);
                   res.send({
                     status: "OK",
                     msg: "Device created successfully",
@@ -789,6 +790,7 @@ module.exports = {
                       msg: "Device created successfully",
                       deviceCustomer: objnew,
                     });
+                    freeradius.updateDevice(objnew);
                   }
                 });
             } else {
@@ -839,6 +841,7 @@ module.exports = {
                   msg: "Device update successfully",
                   deviceCustomer: objupdate,
                 });
+                freeradius.updateDevice(objupdate);
               } else {
                 res.send({
                   status: "error",
@@ -863,6 +866,7 @@ module.exports = {
               msg: "Device deleted successfully",
               deviceCustomer: obj,
             });
+            freeradius.deleteDevice(obj);
           } else {
             res.send({
               status: "error",
