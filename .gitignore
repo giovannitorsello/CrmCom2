@@ -9,6 +9,7 @@ backup/
 data_csv/
 docker/
 config.json
+companyassets.json
 backup/*
 data_csv/*
 *.pem
