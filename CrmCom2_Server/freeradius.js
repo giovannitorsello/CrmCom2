@@ -131,6 +131,7 @@ class Freeradius {
   }
 
   setBandwidth(params) {
+    //Put attention download for client is upload for PPOE Server
     this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Down", ":=", params.upload_max);
     this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Down", ":=", params.upload_min);
     this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Up", ":=", params.download_max);
