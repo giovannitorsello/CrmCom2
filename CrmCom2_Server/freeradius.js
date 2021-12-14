@@ -131,11 +131,11 @@ class Freeradius {
   }
 
   setBandwidth(params) {
-    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Down", ":=", params.download_max+"k");
-    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Down", ":=", params.download_min+"k");
-    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Up", ":=", params.upload_max+"k");
-    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Up", ":=", params.upload_min+"k");
-    this.setRadiusReply(params.username,"Mikrotik-Rate-Limit",":=", params.download_max+"k/"+params.upload_max+"k");
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Down", ":=", params.download_max);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Down", ":=", params.download_min);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Up", ":=", params.upload_max);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Up", ":=", params.upload_min);
+    this.setRadiusReply(params.username,"Mikrotik-Rate-Limit",":=", params.download_max+"/"+params.upload_max);
   }
 
   deleteUser(user) {
@@ -226,10 +226,10 @@ module.exports = {
         deviceCustomer.objData.bandwith) {
           fr.setBandwidth({
             username: deviceCustomer.objData.ppoe.username,
-            download_min: deviceCustomer.objData.bandwith.download_min, 
-            download_max: deviceCustomer.objData.bandwith.download_max,
-            upload_min:   deviceCustomer.objData.bandwith.upload_min, 
-            upload_max:   deviceCustomer.objData.bandwith.upload_max, 
+            download_min: deviceCustomer.objData.bandwith.download_min*1024, 
+            download_max: deviceCustomer.objData.bandwith.download_max*1024,
+            upload_min:   deviceCustomer.objData.bandwith.upload_min*1024, 
+            upload_max:   deviceCustomer.objData.bandwith.upload_max*1024, 
           });
       }
   },
