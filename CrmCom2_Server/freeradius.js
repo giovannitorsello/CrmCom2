@@ -131,11 +131,11 @@ class Freeradius {
   }
 
   setBandwidth(params) {
-    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Down", ":=", params.download_max);
-    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Down", ":=", params.download_min);
-    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Up", ":=", params.upload_max);
-    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Up", ":=", params.upload_min);
-    this.setRadiusReply(params.username,"Mikrotik-Rate-Limit",":=", params.download_max+"/"+params.upload_max);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Down", ":=", params.upload_max);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Down", ":=", params.upload_min);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Max-Up", ":=", params.download_max);
+    this.setRadiusReply(params.username,"WISPr-Bandwidth-Min-Up", ":=", params.download_min);
+    this.setRadiusReply(params.username,"Mikrotik-Rate-Limit",":=", params.upload_max+"/"+params.download_max);
   }
 
   deleteUser(user) {
