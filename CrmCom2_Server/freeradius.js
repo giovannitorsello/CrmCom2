@@ -105,7 +105,7 @@ class Freeradius {
       function (error, results, fields) {
           var query="";
           if (results.length === 0) query="replace into radreply SET ?";
-          else query="update radreply SET ? where id="+results[0].id;
+          else query="UPDATE radreply SET ? where id="+results[0].id;
           var data = {
             username: username,
             attribute: attribute,
