@@ -108,6 +108,7 @@ database.setup(app, function () {
 // Radius alignments and check
 const job = schedule.scheduleJob('*/1 * * * *', function(){
   database.entities.deviceCustomer.findAll().then(devices => {
+    console.log("Update Radius Data");
     var ppoe_usernames=[];
     devices.forEach((device, index, array) => {
       if(device.objData && device.objData.ppoe) {
