@@ -226,10 +226,10 @@ module.exports = {
         deviceCustomer.objData.bandwith) {
           fr.setBandwidth({
             username: deviceCustomer.objData.ppoe.username,
-            download_min: deviceCustomer.objData.bandwith.download_min, 
-            download_max: deviceCustomer.objData.bandwith.download_max,
-            upload_min:   deviceCustomer.objData.bandwith.upload_min, 
-            upload_max:   deviceCustomer.objData.bandwith.upload_max, 
+            download_min: deviceCustomer.objData.bandwith.download_min + "k", 
+            download_max: deviceCustomer.objData.bandwith.download_max + "k",
+            upload_min:   deviceCustomer.objData.bandwith.upload_min + "k", 
+            upload_max:   deviceCustomer.objData.bandwith.upload_max + "k", 
           });
       }
   },

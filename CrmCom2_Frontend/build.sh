@@ -15,7 +15,7 @@ export HOSTNAME=127.0.0.1
 pid_emulator=`ps -Al | grep "emulator" | awk 'BEGIN{FS=" "}{print $4}'`
 if [ az $pid ]
 then
-	${ANDROID_SDK_ROOT}/emulator/emulator -avd Pixel_3a_API_30_x86 &
+	${ANDROID_SDK_ROOT}/emulator/emulator -avd Nexus6API30 &
 fi
 
 
