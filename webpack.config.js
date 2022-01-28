@@ -20,6 +20,13 @@ module.exports = {
     __dirname: false,   // if you don't put this is, __dirname
     __filename: false,  // and __filename return blank or /
   },
+  devServer: {
+    https: {
+        key: fs.readFileSync('/home/cortese/Sviluppo/CrmCom2/certs/crmcom2.wifinetcom.net.key'),
+        cert: fs.readFileSync('/home/cortese/Sviluppo/CrmCom2/certs/crmcom2.wifinetcom.net.crt'),
+        ca: fs.readFileSync('/home/cortese/Sviluppo/CrmCom2/certs/wifinetcomDevCA.pem')
+    }
+  },
   externals: [nodeExternals()], // Need this to avoid error when working with Express
   module: {
     rules: [

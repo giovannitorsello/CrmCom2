@@ -9,6 +9,7 @@
 const DotEnv = require('dotenv');
 const webpack = require('webpack');
 const envparser = require('./src/config/envparser.js');
+const fs=require('fs');
 
 module.exports = function(/* ctx */) {
   return {
@@ -80,7 +81,11 @@ module.exports = function(/* ctx */) {
     devServer: {
       host: process.env.APP_HOST,
       port: process.env.APP_PORT,
-      https: true,
+      https: {
+          key: fs.readFileSync('../certs/crmcom2.wifinetcom.net.key'),
+          cert: fs.readFileSync('../certs/crmcom2.wifinetcom.net.crt'),
+          ca: fs.readFileSync('../certs/wifinetcomDevCA.pem')
+      },      
       vueDevtools: false,
       open: false
     },

@@ -62,8 +62,8 @@ app.use(config.paths.documentsFolder, express.static(process.cwd() + config.path
 app.use(config.paths.contractsFolder, express.static(process.cwd()+config.paths.contractsFolder));
 
 const options = {
-  key: fs.readFileSync(process.cwd() +'/certs/apiserver/privkey.pem'),
-  cert: fs.readFileSync(process.cwd() +'/certs/apiserver/fullchain.pem')
+  key: fs.readFileSync(process.cwd() +'/../certs/crmcom2.wifinetcom.net.key'),
+  cert: fs.readFileSync(process.cwd() +'/../certs/crmcom2.wifinetcom.net.crt')
 };
 
 console.log("Server is listening http on port: "+config.server.http_port);
