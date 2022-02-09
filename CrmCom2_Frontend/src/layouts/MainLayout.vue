@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-btn dense flat round icon="menu" @click="left = !left" />
 
-        <q-toolbar-title>CrmCom2 -- ({{user.role}})</q-toolbar-title>
+        <q-toolbar-title>CrmCom2 -- BENTORNATO {{user.role}}</q-toolbar-title>
       </q-toolbar>
     </q-header>
 

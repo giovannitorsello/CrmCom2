@@ -1,6 +1,9 @@
 <template>
   <q-layout view="hHh lpR lFf">
+    
     <q-page-container>
+      
+     
       <router-view />
     </q-page-container>
     
@@ -11,7 +14,8 @@
 export default {
   data() {
     return {
-      left: false
+      left: false,
+      linkImg:'https://placeimg.com/500/300/nature'
     };
   },
   methods: {

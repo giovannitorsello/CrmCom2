@@ -21,6 +21,7 @@
     "axios": "^0.18.1",
     "babel": "^6.23.0",
     "core-js": "^3.6.5",
+    "jspdf": "^2.5.1",
     "quasar": "^1.16.0",
     "vee-validate": "^3.4.3",
     "vue-d3-network": "^0.1.28",

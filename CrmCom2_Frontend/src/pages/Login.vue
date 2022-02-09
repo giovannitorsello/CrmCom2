@@ -1,6 +1,12 @@
+
 <template>
+  
   <div id="login" class="absolute-center q-pa-md" style="max-width: 400px">
+    
     <q-form ref="loginForm" @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+       <q-img
+          src="/icons/logo_wifinetcom.png"
+        />
       <q-input
         label="Nome utente"
         v-model="username"

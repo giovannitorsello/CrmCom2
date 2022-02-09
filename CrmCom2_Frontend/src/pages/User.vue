@@ -2,10 +2,10 @@
   <div id="user">
     <h5>Gestione utenti sistema</h5>
 
-    <img src="./img/actions/new.png" @click="newUser()" style="width: 48px; height: 48px;" />
-    <img src="./img/actions/save.png" @click="saveUser()" style="width: 48px; height: 48px;" />
-    <img src="./img/actions/delete.png" @click="deleteUser()" style="width: 48px; height: 48px;" />
-    <img src="./img/actions/exit.png" @click="exit()" style="width: 48px; height: 48px;" />
+    <img src="./img/actions/new.png" @click="newUser()" style="width: 48px; height: 48px;" title="Nuovo"/>
+    <img src="./img/actions/save.png" @click="saveUser()" style="width: 48px; height: 48px;" title="Salva" />
+    <img src="./img/actions/delete.png" @click="deleteUser()" style="width: 48px; height: 48px;" title="Cancella" />
+    <img src="./img/actions/exit.png" @click="exit()" style="width: 48px; height: 48px;" title="Esci" />
 
     <ValidationObserver ref="formUsers">
     <q-form ref="userForm" class="q-gutter-md">
@@ -94,21 +94,25 @@
           <q-td auto-width>
             <img
               src="./img/actions/open.png"
+              title="Visualizza dati"
               v-on:click="openUser(props.row)"
               style="width: 32px; height: 32px;"
             />
             <img
               src="./img/actions/unlocked.png"
+              title="Sblocca"
               v-on:click="activateUser(props.row)"
               style="width: 32px; height: 32px;"
             />
             <img
               src="./img/actions/locked.png"
+              title="Blocca"
               v-on:click="suspendUser(props.row)"
               style="width: 32px; height: 32px;"
             />
             <img
               src="./img/actions/delete.png"
+              title="Cancella"
               v-on:click="deleteUser(props.row)"
               style="width: 32px; height: 32px;"
             />
