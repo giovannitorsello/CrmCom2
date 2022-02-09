@@ -3,9 +3,9 @@
 ######################
 
 # Generate private key
-#openssl genrsa -des3 -out wifinetcomDevCA.key 2048
+openssl genrsa -des3 -out wifinetcomDevCA.key 2048
 # Generate root certificate
-#openssl req -x509 -new -nodes -key wifinetcomDevCA.key -sha256 -days 3650 -out wifinetcomDevCA.pem
+openssl req -x509 -new -nodes -key wifinetcomDevCA.key -sha256 -days 3650 -out wifinetcomDevCA.pem
 
 ######################
 # Create CA-signed certs
